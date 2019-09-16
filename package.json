@@ -1,0 +1,25 @@
+{
+  "name": "WebAppPsychologue",
+  "version": "1.0.0",
+  "description": "application web pour Manon",
+  "main": "server.js",
+  "dependencies": {
+    "hapi": "^18.1.0",
+    "inert": "^5.1.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MrGabeux37/WebAppPsychologue.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MrGabeux37/WebAppPsychologue/issues"
+  },
+  "homepage": "https://github.com/MrGabeux37/WebAppPsychologue#readme"
+}
