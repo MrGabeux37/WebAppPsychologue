@@ -17,7 +17,7 @@ server.route([{
   method: 'GET',
   path: '/',
   handler: (request, h) => {
-    return h.file('D:/Git/WebAppPsychologue/view/home.html');
+    return h.file('view/home.html');
     }
   }
 ]);
