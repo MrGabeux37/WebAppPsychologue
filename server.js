@@ -7,20 +7,28 @@ const server = new Hapi.Server({
 
 async function start (){
   await server.register({
-    plugin: require('inert')
+    plugin: require('vision')
   });
   await server.start()
   console.log('Server running at: '+server.info.uri);
+
+  server.route([{
+    method: 'GET',
+    path: '/',
+    handler: (request, h) => {
+      return h.view('index');
+      }
+  }]);
+
+  server.views({
+    engines:{
+      html: require('handlebars')
+    },
+    path: __dirname + '/views',
+    layoutPath: 'views/layout',
+    layout: 'home'
+  });
+
 };
-
-server.route([{
-  method: 'GET',
-  path: '/',
-  handler: (request, h) => {
-    return h.file('view/home.html');
-    }
-  }
-]);
-
 
 start();
