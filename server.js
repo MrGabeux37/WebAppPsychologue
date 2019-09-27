@@ -38,7 +38,7 @@ async function start (){
     method: 'GET',
     path: '/',
     handler: (request, h) => {
-      return h.view('index');
+      return h.view('login');
       }
   },
   {
@@ -48,7 +48,7 @@ async function start (){
       const payload = request.query;
       console.log(payload.first);
 
-      connection.query('INSERT INTO users (first_name,last_name,email,password) VALUES ("' + payload.first + '","' + payload.last_name + '","' + payload.email + '","' + payload.password + '")', function (error, results, fields) {
+      connection.query('INSERT INTO users (first_name,last_name,email,password) VALUES ("' + payload.first + '","' + payload.last + '","' + payload.email + '","' + payload.password + '")', function (error, results, fields) {
             if (error) throw error;
             console.log(results);
             return results;
