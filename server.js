@@ -2,9 +2,13 @@
 
 const Hapi = require('hapi');
 const Mysql = require('mysql');
-const Routes = require('./routes');
+const Path = require('path');
+const Handlebars = require('handlebars');
+const HandlebarsRepeatHelper = require('handlebars-helper-repeat');
 
+Handlebars.registerHelper('repeat', HandlebarsRepeatHelper)
 
+//connection de la base de données
 var connection = Mysql.createConnection({
   host:'localhost',
   user:'root',
@@ -12,14 +16,11 @@ var connection = Mysql.createConnection({
   database:'hapijslogin'
 });
 
-
-
 connection.connect(function(err){
   if(err){
     console.error('error connecting: ' + err.stack);
     return
   }
-
   console.log('connected as id ' + connection.threadId);
 });
 
@@ -35,22 +36,25 @@ async function start (){
     },
     {
       plugin: require('inert')
+    },
+    {
+      plugin: require('./web/base')
     }
   ]);
 
   await server.start()
   console.log('Server running at: '+server.info.uri);
 
-  server.route(Routes);
+  const viewsPath = Path.resolve(__dirname,'views');
 
   server.views({
     engines:{
-      html: require('handlebars')
+      html: Handlebars
     },
-    path: __dirname + '/views',
-    layoutPath: 'views/layout',
+    path: viewsPath,
+    layoutPath: Path.resolve(viewsPath, 'layout'),
     layout: 'home',
-    partialsPath: 'views/partials'
+    partialsPath: Path.resolve(viewsPath, 'partials')
   });
 
 };
