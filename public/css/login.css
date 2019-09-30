@@ -4,7 +4,7 @@ body, html{
 }
 
 .backgroundimg{
-  background-image: url("petitprince.jpg");
+  background-image: url("../images/petitprince.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

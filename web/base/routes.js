@@ -6,7 +6,7 @@ const Routes = [
   method: 'GET',
   path: '/',
   handler: (request, h) => {
-    return h.view('login/login');
+    return h.view('main/login');
   }
 },
 
@@ -31,7 +31,7 @@ const Routes = [
   path: '/image/{file*}',
   handler:{
     directory:{
-      path: 'views/login',
+      path: 'public',
       listing: true
     }
   }

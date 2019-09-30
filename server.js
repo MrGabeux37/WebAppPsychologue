@@ -45,7 +45,7 @@ async function start (){
   await server.start()
   console.log('Server running at: '+server.info.uri);
 
-  const viewsPath = Path.resolve(__dirname,'views');
+  const viewsPath = Path.resolve(__dirname,'public','views');
 
   server.views({
     engines:{
