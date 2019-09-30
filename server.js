@@ -2,6 +2,7 @@
 
 const Hapi = require('hapi');
 const Mysql = require('mysql');
+const Routes = require('./routes');
 
 
 var connection = Mysql.createConnection({
@@ -28,35 +29,19 @@ const server = new Hapi.Server({
 });
 
 async function start (){
-  await server.register({
-    plugin: require('vision')
-  });
+  await server.register([
+    {
+      plugin: require('vision')
+    },
+    {
+      plugin: require('inert')
+    }
+  ]);
+
   await server.start()
   console.log('Server running at: '+server.info.uri);
 
-  server.route([{
-    method: 'GET',
-    path: '/',
-    handler: (request, h) => {
-      return h.view('login');
-      }
-  },
-  {
-    method: 'POST',
-    path: '/register',
-    handler: (request, h) =>{
-      const payload = request.query;
-      console.log(payload.first);
-
-      connection.query('INSERT INTO users (first_name,last_name,email,password) VALUES ("' + payload.first + '","' + payload.last + '","' + payload.email + '","' + payload.password + '")', function (error, results, fields) {
-            if (error) throw error;
-            console.log(results);
-            return results;
-      })
-      return payload
-    }
-  }
-  ]);
+  server.route(Routes);
 
   server.views({
     engines:{
@@ -64,7 +49,8 @@ async function start (){
     },
     path: __dirname + '/views',
     layoutPath: 'views/layout',
-    layout: 'home'
+    layout: 'home',
+    partialsPath: 'views/partials'
   });
 
 };

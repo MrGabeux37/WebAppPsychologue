@@ -1,0 +1,13 @@
+body, html{
+  margin: 0;
+  padding: 0;
+}
+
+.backgroundimg{
+  background-image: url("petitprince.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  min-height: 380px;
+}
