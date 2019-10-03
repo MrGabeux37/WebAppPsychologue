@@ -1,6 +1,17 @@
 'use strict'
+const Mysql = require('mysql');
+
+//connection de la base de données
+var connection = Mysql.createConnection({
+  host:'localhost',
+  user:'root',
+  password:'password',
+  database:'manon_psychologie'
+});
 
 const Routes = [
+
+
 
 {
   method: 'GET',
@@ -17,7 +28,7 @@ const Routes = [
     const payload = request.query;
     console.log(payload.first);
 
-    connection.query('INSERT INTO users (first_name,last_name,email,password) VALUES ("' + payload.first + '","' + payload.last + '","' + payload.email + '","' + payload.password + '")', function (error, results, fields) {
+    connection.query('INSERT INTO psychologue (nom,prenom,courriel,num_telephone,mot_de_passe) VALUES ("' + payload.last + '","' + payload.first + '","' + payload.email + '","' + payload.phone + '",MD5(\'"' + payload.password + '"\'))', function (error, results, fields) {
           if (error) throw error;
           console.log(results);
           return results;
