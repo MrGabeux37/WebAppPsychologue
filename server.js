@@ -1,4 +1,28 @@
+'use strict'
+
 const Hapi = require('hapi');
+const Mysql = require('mysql');
+const Path = require('path');
+const Handlebars = require('handlebars');
+const HandlebarsRepeatHelper = require('handlebars-helper-repeat');
+
+Handlebars.registerHelper('repeat', HandlebarsRepeatHelper)
+
+//connection de la base de données
+var connection = Mysql.createConnection({
+  host:'localhost',
+  user:'root',
+  password:'password',
+  database:'manon_psychologue'
+});
+
+connection.connect(function(err){
+  if(err){
+    console.error('error connecting: ' + err.stack);
+    return
+  }
+  console.log('connected as id ' + connection.threadId);
+});
 
 const server = new Hapi.Server({
   host: 'localhost',
@@ -6,27 +30,31 @@ const server = new Hapi.Server({
 });
 
 async function start (){
-  await server.register({
-    plugin: require('vision')
-  });
+  await server.register([
+    {
+      plugin: require('vision')
+    },
+    {
+      plugin: require('inert')
+    },
+    {
+      plugin: require('./web/base')
+    }
+  ]);
+
   await server.start()
   console.log('Server running at: '+server.info.uri);
 
-  server.route([{
-    method: 'GET',
-    path: '/',
-    handler: (request, h) => {
-      return h.view('index');
-      }
-  }]);
+  const viewsPath = Path.resolve(__dirname,'public','views');
 
   server.views({
     engines:{
-      html: require('handlebars')
+      html: Handlebars
     },
-    path: __dirname + '/views',
-    layoutPath: 'views/layout',
-    layout: 'home'
+    path: viewsPath,
+    layoutPath: Path.resolve(viewsPath, 'layout'),
+    layout: 'home',
+    partialsPath: Path.resolve(viewsPath, 'partials')
   });
 
 };
