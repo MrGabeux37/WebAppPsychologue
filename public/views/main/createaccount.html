@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <title>Accueil Manon Psychologie pour Enfants</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../../css/createaccount.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+</head>
+
+<div class="row">
+  <div class="col-sm-8 sol-md-6 col-lg-5 mx-auto">
+    <div class="card mt-5">
+
+      <div class="card-header">
+        <h4 class="text-center">Création du compte</h4>
+      </div>
+
+      <div class="card-body">
+        <form action="/action_page.php" method="post">
+
+          <div class="form-group">
+            <label for="nom_enfant">Nom de l'enfant: </label>
+            <input type="text" class="form-control" name="nom_enfant" placeholder="Entrer le nom de famille" required>
+            <div class="valid-feedback">Valide.</div>
+            <div class="invalid-feedback">S'il vous plait remplir le champ ci-dessus.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="prenom_enfant">Prénom de l'enfant: </label>
+            <input type="text" class="form-control" name="prenom_enfant" placeholder="Entrer le prénom de l'enfant" required>
+            <div class="valid-feedback">Valide.</div>
+            <div class="invalid-feedback">S'il vous plait remplir le champ ci-dessus.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="date_de_naissance_enfant">Date de naissance: </label>
+            <input type="date" class="form-control" name="date_de_naissance_enfant" placeholder="aaaa-mm-jj" required>
+            <div class="valid-feedback">Valide.</div>
+            <div class="invalid-feedback">S'il vous plait remplir le champ ci-dessus.</div>
+          </div>
+
+          <div class="form-group-inline">
+            <label for="sexe_enfant">Sexe: </label>
+            <input type="radio" id="btnradio" class="form-check-input ml-2" name="sexe_enfant" value="M">
+            <label for="sexe_enfant" class="ml-4">Garçon</label>
+            <input type="radio" id="btnradio" class="form-check-input ml-2" name="sexe_enfant" value="F">
+            <label for="sexe_enfant" class="ml-4">Fille</label>
+          </div>
+
+          <div class="form-group">
+            <label for="courriel_enfant">Courriel: </label>
+            <input type="email" class="form-control" name="courriel_enfant" placeholder="Entrer l'adresse courriel de l'enfant" required>
+            <input type="checkbox" class="ml-1" name="courrielcheckenfant" value="true"> Mon enfant n'a pas une adresse courriel <br>
+            <div class="valid-feedback">Valide.</div>
+            <div class="invalid-feedback">S'il vous plait remplir le champ ci-dessus.</div>
+          </div>
+
+          <div class="form-group">
+            <input type="checkbox" class="ml-1" name="famillecheck" value="true"> Êtes-vous une famille monoparentale? <br>
+            <div class="valid-feedback">Valide.</div>
+            <div class="invalid-feedback">S'il vous plait remplir le champ ci-dessus.</div>
+          </div>
+
+          <hr class="my-3">
+
+          <div>
+            <h6 class="text-center"> Parent 1 </h6>
+          </div>
+
+          <div class="form-group">
+            <label for="nom_parent1">Nom du parent: </label>
+            <input type="text" class="form-control" name="nom_parent1" placeholder="Entrer le nom du parent" required>
+            <div class="valid-feedback">Valide.</div>
+            <div class="invalid-feedback">S'il vous plait remplir le champ ci-dessus.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="prenom_parent1">Prénom du parent: </label>
+            <input type="text" class="form-control" name="prenom_parent1" placeholder="Entrer le prénom du parent" required>
+            <div class="valid-feedback">Valide.</div>
+            <div class="invalid-feedback">S'il vous plait remplir le champ ci-dessus.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="date_de_naissance_parent1">Date de naissance: </label>
+            <input type="date" class="form-control" name="date_de_naissance_parent1" placeholder="aaaa-mm-jj" required>
+            <div class="valid-feedback">Valide.</div>
+            <div class="invalid-feedback">S'il vous plait remplir le champ ci-dessus.</div>
+          </div>
+
+          <div class="form-group-inline">
+            <label for="sexe_parent1">Sexe: </label>
+            <input type="radio" id="btnradio" class="form-check-input ml-2" name="sexe_parent1" value="M">
+            <label for="sexe_parent1" class="ml-4">Homme</label>
+            <input type="radio" id="btnradio" class="form-check-input ml-2" name="sexe_parent1" value="F">
+            <label for="sexe_parent1" class="ml-4">Femme</label>
+          </div>
+
+          <div class="form-group">
+            <label for="courriel_parent1">Courriel: </label>
+            <input type="email" class="form-control" name="courriel_parent1" placeholder="Entrer l'adresse courriel du parent" required>
+            <div class="valid-feedback">Valide.</div>
+            <div class="invalid-feedback">S'il vous plait remplir le champ ci-dessus.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="num_telephone_parent1">Numéro de téléphone (Format: 819-000-0000): </label>
+            <input type="tel" class="form-control" name="num_telephone_parent1" placeholder="Entrer le numéro de téléphone du parent" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required>
+            <div class="valid-feedback">Valide.</div>
+            <div class="invalid-feedback">S'il vous plait remplir le champ ci-dessus.</div>
+          </div>
+
+          <hr class="my-3">
+
+          <div>
+            <h6 class="text-center"> Parent 2 </h6>
+          </div>
+
+          <div class="form-group">
+            <label for="nom_parent2">Nom du parent: </label>
+            <input type="text" class="form-control" name="nom_parent2" placeholder="Entrer le nom du parent" required>
+            <div class="valid-feedback">Valide.</div>
+            <div class="invalid-feedback">S'il vous plait remplir le champ ci-dessus.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="prenom_parent2">Prénom du parent: </label>
+            <input type="text" class="form-control" name="prenom_parent2" placeholder="Entrer le prénom du parent" required>
+            <div class="valid-feedback">Valide.</div>
+            <div class="invalid-feedback">S'il vous plait remplir le champ ci-dessus.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="date_de_naissance_parent2">Date de naissance: </label>
+            <input type="date" class="form-control" name="date_de_naissance_parent2" placeholder="aaaa-mm-jj" required>
+            <div class="valid-feedback">Valide.</div>
+            <div class="invalid-feedback">S'il vous plait remplir le champ ci-dessus.</div>
+          </div>
+
+          <div class="form-group-inline">
+            <label for="sexe_parent2">Sexe: </label>
+            <input type="radio" id="btnradio" class="form-check-input ml-2" name="sexe_parent2" value="M">
+            <label for="sexe_parent2" class="ml-4">Homme</label>
+            <input type="radio" id="btnradio" class="form-check-input ml-2" name="sexe_parent2" value="F">
+            <label for="sexe_parent2" class="ml-4">Femme</label>
+          </div>
+
+          <div class="form-group">
+            <label for="courriel_parent2">Courriel: </label>
+            <input type="email" class="form-control" name="courriel_parent2" placeholder="Entrer l'adresse courriel du parent" required>
+            <div class="valid-feedback">Valide.</div>
+            <div class="invalid-feedback">S'il vous plait remplir le champ ci-dessus.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="num_telephone_parent2">Numéro de téléphone (Format: 819-000-0000): </label>
+            <input type="tel" class="form-control" name="num_telephone_parent2" placeholder="Entrer le numéro de téléphone du parent" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required>
+            <div class="valid-feedback">Valide.</div>
+            <div class="invalid-feedback">S'il vous plait remplir le champ ci-dessus.</div>
+          </div>
+
+          <hr class="my-3">
+
+          <div>
+            <h6 class="text-center"> Information du compte </h6>
+          </div>
+
+          <div class="form-group">
+            <label class="mt-1" for="courriel_utilise">Quelle adresse courriel voulez-vous utilisé pour le compte? </label>
+          </div>
+          <div class="form-group">
+            <input type="radio" id="btnradioemail" class="form-check-input ml-2" name="courriel_utilise" value="parent1">
+            <label for="courriel_utilise" class="ml-4">Parent 1</label>
+            <input type="radio" id="btnradioemail" class="form-check-input ml-2" name="courriel_utilise" value="parent2">
+            <label for="courriel_utilise" class="ml-4">Parent 2</label>
+            <input type="radio" id="btnradioemail" class="form-check-input ml-2" name="courriel_utilise" value="enfant">
+            <label for="courriel_utilise" class="ml-4">Enfant</label>
+          </div>
+
+          <div class="form-group-inline">
+            <label for="mot_de_passe">Mot de passe: </label>
+            <input type="text" class="form-control" name="mot_de_passe" placeholder="Entrer le mot de passe" required>
+          </div>
+          <div class="form-group-inline">
+            <label class="mt-2" for="mot_de_passe">Confirmer le mot de passe: </label>
+            <input type="text" class="form-control" name="mot_de_passe" placeholder="Confirmer le mot de passe" required>
+            <div class="valid-feedback">Valide.</div>
+            <div class="invalid-feedback">S'il vous plait remplir le champ ci-dessus.</div>
+          </div>
+
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary center-block mb-2 mt-3">Submit</button>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>

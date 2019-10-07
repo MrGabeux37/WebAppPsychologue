@@ -23,6 +23,14 @@ const Routes = [
 },
 
 {
+  method: 'GET',
+  path: '/createaccount.html',
+  handler: (request, h) => {
+    return h.view('main/createaccount');
+  }
+},
+
+{
   method: 'POST',
   path: '/register',
   handler: (request, h) =>{
