@@ -1,5 +1,6 @@
 'use strict'
 const Mysql = require('mysql');
+const Handlers = require('./handler');
 
 //connection de la base de données
 var connection = Mysql.createConnection({
@@ -39,14 +40,9 @@ const Routes = [
 
 {
   method: 'GET',
-  path: '/image/{file*}',
-  handler:{
-    directory:{
-      path: 'public',
-      listing: true
-    }
-  }
+  path: '/{param*}',
+  handler:Handlers.servePublicDirectory
 }
-]
+];
 
 module.exports = Routes
