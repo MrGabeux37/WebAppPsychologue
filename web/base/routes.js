@@ -10,6 +10,14 @@ var connection = Mysql.createConnection({
   database:'manon_psychologie'
 });
 
+connection.connect(function(err){
+  if(err){
+    console.error('error connecting: ' + err.stack);
+    return
+  }
+  console.log('connected as id ' + connection.threadId);
+});
+
 const Routes = [
 
 
@@ -29,7 +37,7 @@ const Routes = [
     return h.view('main/createaccount');
   }
 },
-
+/*
 {
   method: 'POST',
   path: '/register',
@@ -45,7 +53,7 @@ const Routes = [
     return payload
   }
 },
-
+*/
 {
   method: 'GET',
   path: '/{param*}',
