@@ -37,6 +37,48 @@ const Routes = [
     return h.view('main/createaccount');
   }
 },
+{
+  method: 'GET',
+  path: '/profil',
+  handler:(request,h) =>{
+    return h.view('client/profil');
+  }
+},
+{
+  method: 'GET',
+  path: '/reservation',
+  handler:(request,h) =>{
+    return h.view('client/reservation');
+  }
+},
+{
+  method: 'GET',
+  path: '/calendrier',
+  handler:(request,h) =>{
+    return h.view('client/calendar');
+  }
+},
+{
+  method: 'GET',
+  path: '/profil_psychologue',
+  handler:(request,h) =>{
+    return h.view('psychologue/profil');
+  }
+},
+{
+  method: 'GET',
+  path: '/clients',
+  handler:(request,h) =>{
+    return h.view('psychologue/clients');
+  }
+},
+{
+  method: 'GET',
+  path: '/calendrier_psychologue',
+  handler:(request,h) =>{
+    return h.view('psychologue/calendar');
+  }
+},
 /*
 {
   method: 'POST',
