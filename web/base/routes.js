@@ -1,7 +1,7 @@
 'use strict'
 const Mysql = require('mysql');
 const Handlers = require('./handler');
-
+/*
 //connection de la base de données
 var connection = Mysql.createConnection({
   host:'localhost',
@@ -17,7 +17,7 @@ connection.connect(function(err){
   }
   console.log('connected as id ' + connection.threadId);
 });
-
+*/
 const Routes = [
 
 
@@ -32,7 +32,7 @@ const Routes = [
 
 {
   method: 'GET',
-  path: '/createaccount.html',
+  path: '/createaccount',
   handler: (request, h) => {
     return h.view('main/createaccount');
   }
