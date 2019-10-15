@@ -6,7 +6,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-  <link rel="stylesheet" href="../../css/createaccount.css">
+  <script src="../../script/profil.Client.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
@@ -22,7 +22,101 @@
       </div>
 
       <div class="card-body">
+        <form action="/register_client" method="post">
 
+          <h6 class="text-center mb-3"> Parent 1 </h6>
+
+          <div class="row">
+            <div class="col">
+              <label for="nom_parent1">Nom:</label>
+              <input type="text" class="form-control-inline" name="nom_parent1">
+            </div>
+            <div class="col">
+              <label for="prenom_parent1">Prénom:</label>
+              <input type="text" class="form-control-inline" name="prenom_parent1">
+            </div>
+          </div>
+
+          <div class="row mt-2">
+            <div class="col">
+              <label for="date_de_naissance_parent1">Date de naissance: </label>
+              <input type="date" class="form-control-inline" name="date_de_naissance_parent1">
+            </div>
+            <div class="col">
+              <label for="sexe_parent1" class="mr-2">Sexe: </label>
+              <input type="radio" id="btnradio" class="form-check-input-inline" name="sexe_parent1" value="M">
+              <label for="sexe_parent1" class="mr-2">Homme</label>
+              <input type="radio" id="btnradio" class="form-check-input-inline" name="sexe_parent1" value="F">
+              <label for="sexe_parent1">Femme</label>
+            </div>
+          </div>
+
+          <div class="row mt-2">
+            <div class="col">
+              <label for="courriel_parent1">Courriel:</label>
+              <input type="email" class="form-control-inline" name="courriel_parent1">
+            </div>
+            <div class="col">
+              <label for="prenom_parent1">Téléphone:</label>
+              <input type="tel" class="form-control-inline" name="num_telephone_parent1" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}">
+            </div>
+          </div>
+
+          <hr class="mt-4">
+
+          <div id="parent2">
+            <!-- ajout de ce block dans le handler-->
+          </div>
+
+          <h6 class="text-center mb-1"> Enfant </h6>
+
+          <div class="row">
+            <div class="col-6">
+              <label>Enfant:</label>
+              <div class="dropdown-menu">
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <label for="nom_enfant">Nom:</label>
+              <input type="text" class="form-control-inline" name="nom_enfant">
+            </div>
+            <div class="col">
+              <label for="prenom_enfant">Prénom:</label>
+              <input type="text" class="form-control-inline" name="prenom_enfant">
+            </div>
+          </div>
+
+          <div class="row mt-2">
+            <div class="col">
+              <label for="date_de_naissance_enfant">Date de naissance: </label>
+              <input type="date" class="form-control-inline" name="date_de_naissance_enfant">
+            </div>
+            <div class="col">
+              <label for="sexe_parent1" class="mr-2">Sexe: </label>
+              <input type="radio" id="btnradio" class="form-check-input-inline" name="sexe_enfant" value="M">
+              <label for="sexe_parent1" class="mr-2">Homme</label>
+              <input type="radio" id="btnradio" class="form-check-input-inline" name="sexe_enfant" value="F">
+              <label for="sexe_parent1">Femme</label>
+            </div>
+          </div>
+
+          <div class="row mt-2">
+            <div class="col">
+              <label for="courriel_enfant">Courriel:</label>
+              <input type="email" class="form-control-inline" name="courriel_enfant">
+            </div>
+          </div>
+
+          <div class="row mt-2">
+            <div class="col text-center">
+              <button type="submit" class="btn btn-primary center-block mt-2">Submit</button>
+            </div>
+          </div>
+
+        </form>
       </div>
 
     </div>
