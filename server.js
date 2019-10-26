@@ -1,28 +1,11 @@
 'use strict'
 
 const Hapi = require('hapi');
-const Mysql = require('mysql');
 const Path = require('path');
 const Handlebars = require('handlebars');
 const HandlebarsRepeatHelper = require('handlebars-helper-repeat');
 
 Handlebars.registerHelper('repeat', HandlebarsRepeatHelper)
-
-//connection de la base de données
-var connection = Mysql.createConnection({
-  host:'localhost',
-  user:'root',
-  password:'password',
-  database:'manon_psychologue'
-});
-
-connection.connect(function(err){
-  if(err){
-    console.error('error connecting: ' + err.stack);
-    return
-  }
-  console.log('connected as id ' + connection.threadId);
-});
 
 const server = new Hapi.Server({
   host: 'localhost',
