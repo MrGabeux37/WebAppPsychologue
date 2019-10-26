@@ -69,7 +69,7 @@ const Routes = [
   method: 'GET',
   path: '/clients',
   handler:(request,h) =>{
-    return h.view('psychologue/clients');
+    return h.view('psychologue/clients_recherche');
   }
 },
 {
