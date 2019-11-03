@@ -4,6 +4,7 @@
   "description": "application web pour Manon",
   "main": "server.js",
   "dependencies": {
+    "boom": "^7.3.0",
     "handlebars": "^4.2.0",
     "handlebars-helper-repeat": "^2.0.0",
     "hapi": "^18.1.0",

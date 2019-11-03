@@ -1,9 +1,11 @@
 'use strict'
-const Mysql = require('mysql');
+
 const Handlers = require('./handler');
-/*
+const Mysql = require('mysql');
+const Boom = require('boom');
+
 //connection de la base de données
-var connection = Mysql.createConnection({
+const connection = Mysql.createConnection({
   host:'localhost',
   user:'root',
   password:'password',
@@ -17,11 +19,8 @@ connection.connect(function(err){
   }
   console.log('connected as id ' + connection.threadId);
 });
-*/
+
 const Routes = [
-
-
-
 {
   method: 'GET',
   path: '/',
@@ -79,6 +78,25 @@ const Routes = [
     return h.view('psychologue/calendar');
   }
 },
+{
+  method: 'GET',
+  path: '/{param*}',
+  handler:Handlers.servePublicDirectory
+},
+{
+  method: 'GET',
+  path: '/toutclients',
+  handler: function (request, reply){
+    const promise = new Promise((resolve,reject)=>{
+      connection.query('SELECT nom,prenom,sexe FROM client',
+      function (error, results, fields){
+        if(!results) throw Boom.notFound(`No Client found`);
+        resolve(results);
+      });
+    })
+    return promise
+  }
+}
 /*
 {
   method: 'POST',
@@ -88,19 +106,14 @@ const Routes = [
     console.log(payload.first);
 
     connection.query('INSERT INTO psychologue (nom,prenom,courriel,num_telephone,mot_de_passe) VALUES ("' + payload.last + '","' + payload.first + '","' + payload.email + '","' + payload.phone + '",MD5(\'"' + payload.password + '"\'))', function (error, results, fields) {
-          if (error) throw error;
-          console.log(results);
-          return results;
+      if (error) throw error;
+      console.log(results);
+      return results;
     })
     return payload
   }
 },
 */
-{
-  method: 'GET',
-  path: '/{param*}',
-  handler:Handlers.servePublicDirectory
-}
 ];
 
 module.exports = Routes

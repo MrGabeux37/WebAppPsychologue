@@ -12,6 +12,7 @@ const server = new Hapi.Server({
   port: 3000
 });
 
+//configuration des plugins
 async function start (){
   await server.register([
     {
@@ -30,6 +31,7 @@ async function start (){
 
   const viewsPath = Path.resolve(__dirname,'public','views');
 
+//configuration de methode views pour coter client du serveur
   server.views({
     engines:{
       html: Handlebars
@@ -42,4 +44,5 @@ async function start (){
 
 };
 
+//depart serveur
 start();
