@@ -96,24 +96,26 @@ const Routes = [
     })
     return promise
   }
-}
-/*
+},
+
 {
   method: 'POST',
   path: '/register',
   handler: (request, h) =>{
-    const payload = request.query;
-    console.log(payload.first);
+    const payload = request.payload;
+    console.log(payload);
 
-    connection.query('INSERT INTO psychologue (nom,prenom,courriel,num_telephone,mot_de_passe) VALUES ("' + payload.last + '","' + payload.first + '","' + payload.email + '","' + payload.phone + '",MD5(\'"' + payload.password + '"\'))', function (error, results, fields) {
+ //parent1
+    connection.query('INSERT INTO client (nom,prenom,date_de_naissance,sexe,courriel,num_telephone,permission,mot_de_passe) VALUES ("' + payload.last + '","' + payload.first + '","' + payload.email + '","' + payload.phone + '",MD5(\'"' + payload.password + '"\'))', function (error, results, fields) {
       if (error) throw error;
       console.log(results);
       return results;
     })
-    return payload
+
+    return payload;
   }
 },
-*/
+
 ];
 
 module.exports = Routes
