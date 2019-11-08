@@ -3,6 +3,7 @@
 const Handlers = require('./handler');
 const Mysql = require('mysql');
 const Boom = require('boom');
+const Jsdom = require('jsdom');
 
 //connection de la base de données
 const connection = Mysql.createConnection({
@@ -106,11 +107,20 @@ const Routes = [
     console.log(payload);
 
  //parent1
-    connection.query('INSERT INTO client (nom,prenom,date_de_naissance,sexe,courriel,num_telephone,permission,mot_de_passe) VALUES ("' + payload.last + '","' + payload.first + '","' + payload.email + '","' + payload.phone + '",MD5(\'"' + payload.password + '"\'))', function (error, results, fields) {
+    connection.query('INSERT INTO client (nom, prenom, date_de_naissance, sexe, courriel, num_telephone, permission, mot_de_passe) VALUES ("' + payload.nom_parent1 + '","' + payload.prenom_parent1 + '","' + payload.date_de_naissance_parent1 + '","' + payload.sexe_parent1 + '","' + payload.courriel_parent1 + '","' + payload.num_telephone_parent1 + '","' + "0" + '",MD5(\'"' + payload.mot_de_passe[1] + '"\'))', function (error, results, fields) {
       if (error) throw error;
-      console.log(results);
-      return results;
+      console.log(results.insertId);
     })
+
+  //parent2
+    if(famillecheck){
+      connection.query('INSERT INTO client (nom, prenom, date_de_naissance, sexe, courriel, num_telephone, permission, mot_de_passe) VALUES ("' + payload.nom_parent2 + '","' + payload.prenom_parent2 + '","' + payload.date_de_naissance_parent2 + '","' + payload.sexe_parent2 + '","' + payload.courriel_parent2 + '","' + payload.num_telephone_parent2 + '","' + "0" + '",MD5(\'"' + payload.mot_de_passe[1] + '"\'))', function (error, results, fields) {
+        if (error) throw error;
+        console.log(results.insertId);
+      })
+    }
+  //enfant
+
 
     return payload;
   }

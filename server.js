@@ -5,6 +5,7 @@ const Path = require('path');
 const Handlebars = require('handlebars');
 const HandlebarsRepeatHelper = require('handlebars-helper-repeat');
 
+
 Handlebars.registerHelper('repeat', HandlebarsRepeatHelper)
 
 const server = new Hapi.Server({

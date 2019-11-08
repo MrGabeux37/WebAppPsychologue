@@ -10,7 +10,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="createaccount.js"></script>
+  <script type="text/javascript" src="../../script/createaccount.js"></script>
 
 </head>
 
@@ -63,7 +63,7 @@
           </div>
 
           <div class="form-group">
-            <input type="checkbox" onchange="onSelectMono(this);" class="ml-1" name="famillecheck" value="true"> Êtes-vous une famille monoparentale? <br>
+            <input type="checkbox" onchange="onSelectMono(this);" class="ml-1" id="famillecheck" name="famillecheck" value="true"> Êtes-vous une famille monoparentale? <br>
             <div class="valid-feedback">Valide.</div>
             <div class="invalid-feedback">S'il vous plait remplir le champ ci-dessus.</div>
           </div>
@@ -146,9 +146,9 @@
 
           <div class="form-group-inline">
             <label for="sexe_parent2">Sexe: </label>
-            <input type="radio" id="btnradio" class="form-check-input ml-2" name="sexe_parent2" value="M">
+            <input type="radio" id="btnradio2" class="form-check-input ml-2" name="sexe_parent2" value="M">
             <label for="sexe_parent2" class="ml-4">Homme</label>
-            <input type="radio" id="btnradio" class="form-check-input ml-2" name="sexe_parent2" value="F">
+            <input type="radio" id="btnradio3" class="form-check-input ml-2" name="sexe_parent2" value="F">
             <label for="sexe_parent2" class="ml-4">Femme</label>
           </div>
 
@@ -190,7 +190,7 @@
           </div>
           <div class="form-group-inline">
             <label class="mt-2" for="mot_de_passe">Confirmer le mot de passe: </label>
-            <input type="text" id="confirmPW" class="form-control" name="mot_de_passe" placeholder="Confirmer le mot de passe" required>
+            <input type="text" id="confirmPW" onchange="onClickSubmit();" class="form-control" name="mot_de_passe" placeholder="Confirmer le mot de passe" required>
             <div class="invalid-feedback">S'il vous plait remplir le champ ci-dessus.</div>
           </div>
 
