@@ -1,20 +1,14 @@
-function onClickSubmit(){
+function CheckPW(){
 
   //assigne les passwords
-  var firstPW = document.getElementById("firstPW").innerHTML ;
-  var confirmPW = document.getElementById("confirmPW").innerHTML ;
-  var node = document.createElement("P");
-  var testnode = document.createTextNode("Le second mot de passe n'est pas identique au premier");
-
-  node.appendChild(textnode);
-  node.id="alertPW";
-  node.style.color="red";
+  var firstPW = document.getElementById("firstPW").value ;
+  var confirmPW = document.getElementById("confirmPW").value ;
 
   if(firstPW!=confirmPW){
-    document.getElementById("alertPW").appendChild(node);
+    document.getElementById("alertPW").innerHTML="Mots de passe non identiques ";
   }
   else{
-    document.getElementById("alertPW").removeChild();
+    document.getElementById("alertPW").innerHTML="";
   }
 
 
@@ -31,15 +25,17 @@ function onSelectMono(checkbox){
     document.getElementById("btnradio3").disabled=true;
     document.getElementById("courriel_parent2").disabled=true;
     document.getElementById("num_telephone_parent2").disabled=true;
+    document.getElementById("btnemail2").disabled=true;
   }
   else{
     document.getElementById("nom_parent2").disabled=false;
     document.getElementById("prenom_parent2").disabled=false;
     document.getElementById("date_de_naissance_parent2").disabled=false;
     document.getElementById("btnradio2").disabled=false;
-    document.getElementById("btnradio3").disabled=true;
+    document.getElementById("btnradio3").disabled=false;
     document.getElementById("courriel_parent2").disabled=false;
     document.getElementById("num_telephone_parent2").disabled=false;
+    document.getElementById("btnemail2").disabled=false;
   }
 }
 

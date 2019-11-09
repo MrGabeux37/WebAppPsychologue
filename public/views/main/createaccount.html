@@ -57,13 +57,13 @@
           <div class="form-group">
             <label for="courriel_enfant">Courriel: </label>
             <input type="email" class="form-control" id="courriel_enfant" name="courriel_enfant" placeholder="Entrer l'adresse courriel de l'enfant" required>
-            <input type="checkbox" class="ml-1" onchange="onSelectCourrielEnfant(this);" name="courrielcheckenfant" value="true"> Mon enfant n'a pas une adresse courriel <br>
+            <input type="checkbox" class="ml-1" onchange="onSelectCourrielEnfant(this)" name="courrielcheckenfant" value="true"> Mon enfant n'a pas une adresse courriel <br>
             <div class="valid-feedback">Valide.</div>
             <div class="invalid-feedback">S'il vous plait remplir le champ ci-dessus.</div>
           </div>
 
           <div class="form-group">
-            <input type="checkbox" onchange="onSelectMono(this);" class="ml-1" id="famillecheck" name="famillecheck" value="true"> Êtes-vous une famille monoparentale? <br>
+            <input type="checkbox" onchange="onSelectMono(this)" class="ml-1" id="famillecheck" name="famillecheck" value="true"> Êtes-vous une famille monoparentale? <br>
             <div class="valid-feedback">Valide.</div>
             <div class="invalid-feedback">S'il vous plait remplir le champ ci-dessus.</div>
           </div>
@@ -176,11 +176,11 @@
             <label class="mt-1" for="courriel_utilise">Quelle adresse courriel voulez-vous utilisé pour le compte? </label>
           </div>
           <div class="form-group">
-            <input type="checkbox" id="btnemail" class="form-check-input ml-2" name="courriel_utilise1" value="parent1">
+            <input type="checkbox" id="btnemail1" class="form-check-input ml-2" name="courriel_utilise1" value="parent1">
             <label for="courriel_utilise1" class="ml-4">Parent 1</label>
-            <input type="checkbox" id="btnemail" class="form-check-input ml-2" name="courriel_utilise2" value="parent2">
+            <input type="checkbox" id="btnemail2" class="form-check-input ml-2" name="courriel_utilise2" value="parent2">
             <label for="courriel_utilise2" class="ml-4">Parent 2</label>
-            <input type="checkbox" id="btnemail" class="form-check-input ml-2" name="courriel_utilise3" value="enfant">
+            <input type="checkbox" id="btnemail3" class="form-check-input ml-2" name="courriel_utilise3" value="enfant">
             <label for="courriel_utilise3" class="ml-4">Enfant</label>
           </div>
 
@@ -190,8 +190,9 @@
           </div>
           <div class="form-group-inline">
             <label class="mt-2" for="mot_de_passe">Confirmer le mot de passe: </label>
-            <input type="text" id="confirmPW" onchange="onClickSubmit();" class="form-control" name="mot_de_passe" placeholder="Confirmer le mot de passe" required>
+            <input type="text" id="confirmPW" oninput="CheckPW()" class="form-control" name="mot_de_passe" placeholder="Confirmer le mot de passe" required>
             <div class="invalid-feedback">S'il vous plait remplir le champ ci-dessus.</div>
+            <p id="alertPW"></p>
           </div>
 
           <div class="text-center">
