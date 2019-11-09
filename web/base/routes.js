@@ -79,6 +79,7 @@ const Routes = [
     return h.view('psychologue/calendar');
   }
 },
+//Serving Static files
 {
   method: 'GET',
   path: '/{param*}',
@@ -106,21 +107,31 @@ const Routes = [
     const payload = request.payload;
     console.log(payload);
 
- //parent1
+    var parent1,parent2;
+    var courriel_enfant = payload.courriel_enfant;
+ //creation of parent1 in DB
     connection.query('INSERT INTO client (nom, prenom, date_de_naissance, sexe, courriel, num_telephone, permission, mot_de_passe) VALUES ("' + payload.nom_parent1 + '","' + payload.prenom_parent1 + '","' + payload.date_de_naissance_parent1 + '","' + payload.sexe_parent1 + '","' + payload.courriel_parent1 + '","' + payload.num_telephone_parent1 + '","' + "0" + '",MD5(\'"' + payload.mot_de_passe[1] + '"\'))', function (error, results, fields) {
       if (error) throw error;
       console.log(results.insertId);
+      parent1=results.insertId;
     })
 
-  //parent2
-    if(famillecheck){
+ //creation of parent2 in DB
+    if(payload.famillecheck){
       connection.query('INSERT INTO client (nom, prenom, date_de_naissance, sexe, courriel, num_telephone, permission, mot_de_passe) VALUES ("' + payload.nom_parent2 + '","' + payload.prenom_parent2 + '","' + payload.date_de_naissance_parent2 + '","' + payload.sexe_parent2 + '","' + payload.courriel_parent2 + '","' + payload.num_telephone_parent2 + '","' + "0" + '",MD5(\'"' + payload.mot_de_passe[1] + '"\'))', function (error, results, fields) {
         if (error) throw error;
         console.log(results.insertId);
+        parent2=results.insertId;
       })
     }
-  //enfant
-
+ //creation of enfant in DB
+  if(payload.courrielcheckenfant){
+    courriel_enfant=NULL;
+  }
+  connection.query('INSERT INTO client (nom, prenom, date_de_naissance, sexe, courriel, num_telephone, permission, mot_de_passe,id_parent1,id_parent2) VALUES ("' + payload.nom_enfant + '","' + payload.prenom_enfant + '","' + payload.date_de_naissance_enfant + '","' + payload.sexe_enfant + '","' + courriel_enfant + '","' + payload.num_telephone_parent1 + '","' + "0" + '",MD5(\'"' + payload.mot_de_passe[1] + '"\'),"' + parent1 + '","' + parent2 + '")', function (error, results, fields) {
+      if (error) throw error;
+      console.log(results.insertId);
+  })
 
     return payload;
   }
