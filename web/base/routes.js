@@ -4,6 +4,7 @@ const Handlers = require('./handler');
 const Mysql = require('mysql');
 const Boom = require('boom');
 const Jsdom = require('jsdom');
+const md5 = require('md5');
 
 //connection de la base de données
 const connection = Mysql.createConnection({
@@ -21,15 +22,16 @@ connection.connect(function(err){
   console.log('connected as id ' + connection.threadId);
 });
 
-const Routes = [/*
+const Routes = [
+/*
 {
   method: 'GET',
   path: '/',
   handler: (request, h) => {
     return h.view('main/login');
   }
-},*/
-
+},
+*/
 {
   method: 'GET',
   path: '/createaccount',
@@ -83,6 +85,9 @@ const Routes = [/*
 {
   method: 'GET',
   path: '/{param*}',
+  options:{
+    auth: false
+  },
   handler:Handlers.servePublicDirectory
 },
 {
@@ -127,55 +132,65 @@ const Routes = [/*
  //creation of enfant in DB
   if(payload.courrielcheckenfant){
     courriel_enfant=NULL;
-  }
-  connection.query('INSERT INTO client (nom, prenom, date_de_naissance, sexe, courriel, num_telephone, permission, mot_de_passe,id_parent1,id_parent2) VALUES ("' + payload.nom_enfant + '","' + payload.prenom_enfant + '","' + payload.date_de_naissance_enfant + '","' + payload.sexe_enfant + '","' + courriel_enfant + '","' + payload.num_telephone_parent1 + '","' + "0" + '",MD5(\'"' + payload.mot_de_passe[1] + '"\'),"' + parent1 + '","' + parent2 + '")', function (error, results, fields) {
+    connection.query('INSERT INTO client (nom, prenom, date_de_naissance, sexe, courriel, num_telephone, permission, mot_de_passe,id_parent1,id_parent2) VALUES ("' + payload.nom_enfant + '","' + payload.prenom_enfant + '","' + payload.date_de_naissance_enfant + '","' + payload.sexe_enfant + '","' + courriel_enfant + '","' + payload.num_telephone_parent1 + '","' + "0" + '",MD5(\'"' + payload.mot_de_passe[1] + '"\'),"' + parent1 + '","' + parent2 + '")', function (error, results, fields) {
       if (error) throw error;
-      console.log(results.insertId);
-  })
+        console.log(results.insertId);
+    })
+  }
+  else{
+    connection.query('INSERT INTO client (nom, prenom, date_de_naissance, sexe, courriel, num_telephone, permission, mot_de_passe,id_parent1,id_parent2) VALUES ("' + payload.nom_enfant + '","' + payload.prenom_enfant + '","' + payload.date_de_naissance_enfant + '","' + payload.sexe_enfant + '","' + payload.courriel_enfant + '","' + payload.num_telephone_parent1 + '","' + "0" + '",MD5(\'"' + payload.mot_de_passe[1] + '"\'),"' + parent1 + '","' + parent2 + '")', function (error, results, fields) {
+      if (error) throw error;
+        console.log(results.insertId);
+    })
+  }
 
     return payload;
   }
 },
-  {
-    method: 'POST',
-    path: '/',
-    config: {
-      auth: {
-        mode: 'try',
-        strategy: 'session'
-      },
-      plugins: {
-        'hapi-auth-cookie': {
-          redirectTo: false
-        }
-      },
-      handler: function (request, reply) {
-        if (request.auth.isAuthenticated) {
-          return reply.view('Profile')
-        }
-
-        var username = request.payload.username
-        var user = Users[ username ]
-
-        if (!user) {
-          return reply(Boom.notFound('No user registered with given credentials'))
-        }
-
-        var password = request.payload.password
-
-        return Bcrypt.compare(password, user.password, function (err, isValid) {
-          if (isValid) {
-            request.server.log('info', 'user authentication successful')
-            request.cookieAuth.set(user);
-            return reply.view('profile')
-          }
-
-          return reply.view('main/login')
-        })
+{
+  method: 'POST',
+  path: '/login',
+  config: {
+    auth: {
+      mode: 'try',
+      strategy: 'session'
+    },
+    plugins: {
+      'hapi-auth-cookie': {
+        redirectTo: false
       }
+    },
+    handler: function (request,h){
+      if (request.auth.isAuthenticated) {
+        return h.view('client/profil')
+      }
+      var courriel = request.payload.inputCourriel;
+      var user;
+      connection.query('SELECT id_client, prefix, nom, prenom, courriel, permission, mot_de_passe FROM client WHERE courriel="' + courriel + '"', function (error, results, fields) {
+        if (error) throw error;
+        return results;
+      })
+
+      if(!user || !user.lenght){
+        console.log(user);
+        return Boom.notFound('Personne avec ce courriel')
+      }
+
+      var password = md5(request.payload.inputPassword);
+
+      if(password==user.mot_de_passe){
+        console.log(user);
+        request.server.log('info','user authentication successful')
+        request.cookieAuth.set(user);
+        return h.view('client/profil')
+      }
+
+      return h.view('main/login')
+
     }
-  },
-  {
+  }
+},
+{
   method: 'GET',
   path: '/',
   config: {
@@ -188,12 +203,25 @@ const Routes = [/*
         redirectTo: false
       }
     },
-    handler: function (request, reply) {
+    handler: function (request, h) {
       if (request.auth.isAuthenticated) {
-        return reply.view('profile')
+        return h.view('client/profile')
       }
 
-      return reply.view('main/login')
+      return h.view('main/login')
+    }
+  }
+},
+{
+  method: 'GET',
+  path: '/private-route',
+  config: {
+    auth: 'session',
+    handler: (request, h) => {
+      // clear the session data
+      request.cookieAuth.clear()
+
+      return 'Logged out. See you around :)'
     }
   }
 }

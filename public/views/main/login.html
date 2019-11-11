@@ -19,15 +19,15 @@
 
             <h5 class="card-title text-center">Connection</h5>
 
-            <form class="form-signin">
+            <form class="form-signin" action="/login" method="post">
               <div class="form-label-group">
-                <label for="inputEnfant">Adresse Courriel</label>
-                <input type="nomEnfant" id="inputEnfant" class="mb-2 form-control" placeholder="Nom de l'Enfant" required autofocus>
+                <label for="inputCourriel">Adresse Courriel</label>
+                <input type="nomEnfant" id="inputEnfant" name="inputCourriel" class="mb-2 form-control" placeholder="Nom de l'Enfant" required autofocus>
               </div>
 
               <div class="form-label-group">
                 <label for="inputPassword">Mot de passe</label>
-                <input type="password" id="inputPassword" class="form-control" placeholder="Mot de passe" required>
+                <input type="password" id="inputPassword" name="inputPassword" class="form-control" placeholder="Mot de passe" required>
               </div>
               <button class="mt-4 btn btn-lg btn-primary btn-block text-uppercase" type="submit">Connection</button>
             </form>
