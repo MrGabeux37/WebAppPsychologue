@@ -165,25 +165,37 @@ const Routes = [
         return h.view('client/profil')
       }
       var courriel = request.payload.inputCourriel;
-      var user;
-      connection.query('SELECT id_client, prefix, nom, prenom, courriel, permission, mot_de_passe FROM client WHERE courriel="' + courriel + '"', function (error, results, fields) {
-        if (error) throw error;
-        return results;
+      var password = request.payload.inputPassword;
+
+      var user=[];
+      var getInformationFromDB = function(callback){
+        connection.query('SELECT id_client, prefix, nom, prenom, courriel, permission, mot_de_passe FROM client WHERE courriel="' + courriel + '"', function (error, results, fields) {
+          if (error) return callback(error);
+          if(results.length){
+              user.push(results[0]);
+          }
+          callback(null,user);
+        });
+      }
+
+      getInformationFromDB(function(err,user){
+        if(err) console.log("Database error!");
+        else {
+          console.log(md5(user[0].mot_de_passe));
+          console.log(password);
+          if(!user || !user.lenght){
+            return Boom.notFound('Personne avec ce courriel')
+          }
+
+          if(password==md5(user[0].mot_de_passe)){
+            console.log(user[0]);
+            request.server.log('info','user authentication successful')
+            request.cookieAuth.set(user[0]);
+            return h.view('client/profil')
+          }
+        }
       })
 
-      if(!user || !user.lenght){
-        console.log(user);
-        return Boom.notFound('Personne avec ce courriel')
-      }
-
-      var password = md5(request.payload.inputPassword);
-
-      if(password==user.mot_de_passe){
-        console.log(user);
-        request.server.log('info','user authentication successful')
-        request.cookieAuth.set(user);
-        return h.view('client/profil')
-      }
 
       return h.view('main/login')
 
