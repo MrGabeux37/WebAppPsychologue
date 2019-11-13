@@ -112,33 +112,52 @@ const Routes = [
     const payload = request.payload;
     console.log(payload);
 
+    //encription du mot de passe
+    var password=md5(payload.mot_de_passe[1]);
+    //
     var parent1,parent2;
-    var courriel_enfant = payload.courriel_enfant;
+    var courriel_enfant = payload.courriel_parent1;
  //creation of parent1 in DB
-    connection.query('INSERT INTO client (nom, prenom, date_de_naissance, sexe, courriel, num_telephone, permission, mot_de_passe) VALUES ("' + payload.nom_parent1 + '","' + payload.prenom_parent1 + '","' + payload.date_de_naissance_parent1 + '","' + payload.sexe_parent1 + '","' + payload.courriel_parent1 + '","' + payload.num_telephone_parent1 + '","' + "0" + '",MD5(\'"' + md5(payload.mot_de_passe[1]) + '"\'))', function (error, results, fields) {
-      if (error) throw error;
-      console.log(results.insertId);
-      parent1=results.insertId;
-    })
-
- //creation of parent2 in DB
-    if(payload.famillecheck){
-      connection.query('INSERT INTO client (nom, prenom, date_de_naissance, sexe, courriel, num_telephone, permission, mot_de_passe) VALUES ("' + payload.nom_parent2 + '","' + payload.prenom_parent2 + '","' + payload.date_de_naissance_parent2 + '","' + payload.sexe_parent2 + '","' + payload.courriel_parent2 + '","' + payload.num_telephone_parent2 + '","' + "0" + '","' + md5(payload.mot_de_passe[1]) + '")', function (error, results, fields) {
+    var getInformationParent1 = function(callback){
+      connection.query('INSERT INTO client (nom, prenom, date_de_naissance, sexe, courriel, num_telephone, permission, mot_de_passe) VALUES ("' + payload.nom_parent1 + '","' + payload.prenom_parent1 + '","' + payload.date_de_naissance_parent1 + '","' + payload.sexe_parent1 + '","' + payload.courriel_parent1 + '","' + payload.num_telephone_parent1 + '","' + "0" + '","'+ password + '")', function (error, results, fields) {
         if (error) throw error;
         console.log(results.insertId);
-        parent2=results.insertId;
+        parent1=results.insertId;
+        callback(null,parent1);
       })
     }
+
+    //creation of parent2 in DB
+    var getInformationParent2 = function(callback){
+      if(payload.famillecheck){
+        connection.query('INSERT INTO client (nom, prenom, date_de_naissance, sexe, courriel, num_telephone, permission, mot_de_passe) VALUES ("' + payload.nom_parent2 + '","' + payload.prenom_parent2 + '","' + payload.date_de_naissance_parent2 + '","' + payload.sexe_parent2 + '","' + payload.courriel_parent2 + '","' + payload.num_telephone_parent2 + '","' + "0" + '","' + password + '")', function (error, results, fields) {
+          if (error) throw error;
+          console.log(results.insertId);
+          parent2=results.insertId;
+          callback(null,parent2);
+        })
+      }
+    }
+
+    getInformationParent1(function(err,parent1){
+      if(err) console.log("errreurrrreeee lors de parent1")
+    })
+
+    getInformationParent2(function(err,parent2){
+      if(err) console.log("errreurrrreeee lors de parent2")
+    })
+
  //creation of enfant in DB
   if(payload.courrielcheckenfant){
+    console.log(parent1 +" et "+parent2);
     courriel_enfant=NULL;
-    connection.query('INSERT INTO client (nom, prenom, date_de_naissance, sexe, courriel, num_telephone, permission, mot_de_passe,id_parent1,id_parent2) VALUES ("' + payload.nom_enfant + '","' + payload.prenom_enfant + '","' + payload.date_de_naissance_enfant + '","' + payload.sexe_enfant + '","' + courriel_enfant + '","' + payload.num_telephone_parent1 + '","' + "0" + '","' + md5(payload.mot_de_passe[1]) + '","' + parent1 + '","' + parent2 + '")', function (error, results, fields) {
+    connection.query('INSERT INTO client (nom, prenom, date_de_naissance, sexe, courriel, num_telephone, permission, mot_de_passe,id_parent1,id_parent2) VALUES ("' + payload.nom_enfant + '","' + payload.prenom_enfant + '","' + payload.date_de_naissance_enfant + '","' + payload.sexe_enfant + '","' + courriel_enfant + '","' + payload.num_telephone_parent1 + '","' + "0" + '","' + password + '","' + parent1 + '","' + parent2 + '")', function (error, results, fields) {
       if (error) throw error;
         console.log(results.insertId);
     })
   }
   else{
-    connection.query('INSERT INTO client (nom, prenom, date_de_naissance, sexe, courriel, num_telephone, permission, mot_de_passe,id_parent1,id_parent2) VALUES ("' + payload.nom_enfant + '","' + payload.prenom_enfant + '","' + payload.date_de_naissance_enfant + '","' + payload.sexe_enfant + '","' + payload.courriel_enfant + '","' + payload.num_telephone_parent1 + '","' + "0" + '","' + md5(payload.mot_de_passe[1]) + '","' + parent1 + '","' + parent2 + '")', function (error, results, fields) {
+    connection.query('INSERT INTO client (nom, prenom, date_de_naissance, sexe, courriel, num_telephone, permission, mot_de_passe,id_parent1,id_parent2) VALUES ("' + payload.nom_enfant + '","' + payload.prenom_enfant + '","' + payload.date_de_naissance_enfant + '","' + payload.sexe_enfant + '","' + payload.courriel_enfant + '","' + payload.num_telephone_parent1 + '","' + "0" + '","' + password + '","' + parent1 + '","' + parent2 + '")', function (error, results, fields) {
       if (error) throw error;
         console.log(results.insertId);
     })
@@ -165,7 +184,7 @@ const Routes = [
         return h.view('client/profil')
       }
       var courriel = request.payload.inputCourriel;
-      var password = request.payload.inputPassword;
+      var password = md5(request.payload.inputPassword);
 
       var user=[];
       var getInformationFromDB = function(callback){
@@ -181,13 +200,13 @@ const Routes = [
       getInformationFromDB(function(err,user){
         if(err) console.log("Database error!");
         else {
-          console.log(md5(user[0].mot_de_passe));
+          console.log(user[0].mot_de_passe);
           console.log(password);
           if(!user || !user.lenght){
             return Boom.notFound('Personne avec ce courriel')
           }
 
-          if(password==md5(user[0].mot_de_passe)){
+          if(password==user[0].mot_de_passe){
             console.log(user[0]);
             request.server.log('info','user authentication successful')
             request.cookieAuth.set(user[0]);

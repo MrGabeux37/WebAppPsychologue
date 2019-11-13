@@ -22,7 +22,7 @@ exports.registerCompte={
       return reply(Boom.notFound('Personne avec ce courriel'))
     }
 
-    var password = MD5(request.payload.inputPassword);
+    var password = md5(request.payload.inputPassword);
 
     if(password==user.mot_de_passe){
       request.server.log('info','user authentication successful')
