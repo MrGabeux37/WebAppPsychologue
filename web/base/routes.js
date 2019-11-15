@@ -5,22 +5,10 @@ const Mysql = require('mysql');
 const Boom = require('boom');
 const Jsdom = require('jsdom');
 const md5 = require('md5');
-
-//connection de la base de données
-const connection = Mysql.createConnection({
-  host:'localhost',
-  user:'root',
-  password:'password',
-  database:'manon_psychologie'
-});
-
-connection.connect(function(err){
-  if(err){
-    console.error('error connecting: ' + err.stack);
-    return
-  }
-  console.log('connected as id ' + connection.threadId);
-});
+const Client = require('./models/client.js');
+const Psychologue = require('./models/psychologue.js');
+const PlageHoraire = require('./models/plagehoraire.js');
+const RendezVous = require('./models/rendezvous.js');
 
 const Routes = [
 /*
@@ -94,6 +82,9 @@ const Routes = [
   method: 'GET',
   path: '/toutclients',
   handler: function (request, reply){
+
+    return Client.findAll()
+  /*
     const promise = new Promise((resolve,reject)=>{
       connection.query('SELECT nom,prenom,sexe FROM client',
       function (error, results, fields){
@@ -102,6 +93,7 @@ const Routes = [
       });
     })
     return promise
+    */
   }
 },
 
@@ -109,12 +101,12 @@ const Routes = [
   method: 'POST',
   path: '/register',
   handler: (request, h) =>{
-    const payload = request.payload;
+/*    const payload = request.payload;
     console.log(payload);
 
     //encription du mot de passe
     var password=md5(payload.mot_de_passe[1]);
-
+/*
     var parent1 = 'SELECT id_client FROM (SELECT * FROM client) AS parental1 WHERE courriel="'+payload.courriel_parent1+'"' ;
     var parent2 = null;
     var courriel_enfant = payload.courriel_parent1;
@@ -151,6 +143,7 @@ const Routes = [
     }
 
     return h.view('main/login');
+    */
   }
 },
 {
@@ -167,7 +160,7 @@ const Routes = [
       }
     },
     handler: function (request,h){
-      if (request.auth.isAuthenticated) {
+  /*    if (request.auth.isAuthenticated) {
         return h.view('client/profil')
       }
       var courriel = request.payload.inputCourriel;
@@ -205,7 +198,7 @@ const Routes = [
 
       console.log(request.auth.isAuthenticated);
       return h.view('main/login');
-
+*/
     }
   }
 },
@@ -223,8 +216,9 @@ const Routes = [
       }
     },
     handler: function (request, h) {
-      if (request.auth.isAuthenticated) {
+    if (request.auth.isAuthenticated) {
         return h.view('client/profile')
+
       }
 
       return h.view('main/login')

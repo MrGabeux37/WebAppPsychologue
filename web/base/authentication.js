@@ -18,7 +18,7 @@ async function register (server, options) {
 
   });
 
-  server.auth.default('session');
+  //server.auth.default('session');
 
 }
 

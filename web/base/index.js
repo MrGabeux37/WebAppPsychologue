@@ -17,7 +17,7 @@ async function register(server, options){
     },
     {
       plugin:require('inert')
-    }
+    },
   ])
 
   const viewsPath = Path.resolve(__dirname,'../../','./public/views');
