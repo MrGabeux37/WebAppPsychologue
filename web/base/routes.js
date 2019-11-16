@@ -17,6 +17,17 @@ const Routes = [
   config:{
     auth:false,
     handler: (request, h) => {
+      //Si l'utilisateur est authentifié
+     if (request.auth.isAuthenticated) {
+       //verifie si l'utilisateur est un client
+       if(request.auth.credentials.scope==('clientOui'||'clientNon')){
+         return h.redirect('/profil');
+       }
+       //verifie si l'utilisateur est un psychologue
+       else{
+         return h.redirect('/profil_psychologue');
+       }
+      }
       return h.view('main/createaccount');
     }
   }
@@ -30,8 +41,6 @@ const Routes = [
       scope:['clientOui','clientNon']
     },
     handler:(request,h) =>{
-      console.log(request.auth.credentials);
-      console.log(request.auth.isAuthenticated);
       if(request.auth.credentials.scope=='clientOui') return h.view('client/profil',null,{layout:'clientOui'});
       else return h.view('client/profil',null,{layout:'clientNon'});
     }
@@ -114,14 +123,6 @@ const Routes = [
   handler:Handlers.servePublicDirectory
 },
 {
-  method: 'GET',
-  path: '/toutclients',
-  handler: function (request, reply){
-    return Client.findAll()
-  }
-},
-
-{
   method: 'POST',
   path: '/register',
   config:{
@@ -152,41 +153,57 @@ const Routes = [
       }
     },
     handler: async function (request,h){
+
+      //Si l'utilisateur est authentifié
      if (request.auth.isAuthenticated) {
-        return h.view('client/profil')
+       //verifie si l'utilisateur est un client
+       if(request.auth.credentials.scope==('clientOui'||'clientNon')){
+         return h.redirect('/profil');
+       }
+       //verifie si l'utilisateur est un psychologue
+       else{
+         return h.redirect('/profil_psychologue');
+       }
       }
+
       var scope="";
       var inputCourriel = request.payload.inputCourriel;
       var inputPassword = md5(request.payload.inputPassword);
 
+      //cherche un utilisateur dans la table client avec le courriel entré
       var user=await Client.findOne({
         where:{courriel: inputCourriel}
       });
 
+      //verifie s'il la requete précédente donne un résultat null
       if(!user){
+        //cherche un utilisateur dans la table psychologue avec le courriel entré
         user=await Psychologue.findOne({
           where:{courriel:inputCourriel}
         })
+        //verifie s'il la requete précédente donne un résultat null
         if(!user){
           return Boom.notFound('Personne avec ce courriel')
         }
       }
-
+      //verifie s'il le mot de passe entré est le même que celui dans la base de donnée
       if(inputPassword==user.mot_de_passe){
-        console.log(user.mot_de_passe);
-        console.log(inputPassword);
+        request.server.log('info','user authentication successful')
+        //verifie si l'utilisateur est un client
         if(user.prefix=='C'){
-          request.server.log('info','user authentication successful')
+          //verifie la permission du client
           if(user.permission==false)scope="clientNon";
           else scope="clientOui";
+          //set le cookie
           request.cookieAuth.set({
             id : user.id_client,
             scope : scope
           });
           return h.redirect('/profil');
         }
+        //verifie si l'utilisateur est un psychologue
         if(user.prefix=='PS'){
-          request.server.log('info','user authentication successful')
+          //set le cookie
           request.cookieAuth.set({
             id : user.id_psychologue,
             scope: "psychologue"
@@ -194,7 +211,6 @@ const Routes = [
           return h.redirect('/profil_psychologue');
         }
       }
-      console.log(request.auth.isAuthenticated);
       return h.view('main/login');
     }
   }
@@ -214,9 +230,15 @@ const Routes = [
     },
     handler: function (request, h) {
     if (request.auth.isAuthenticated) {
+      //verifie si l'utilisateur est un client
+      if(request.auth.credentials.scope==('clientOui'||'clientNon')){
         return h.redirect('/profil');
-
       }
+      //verifie si l'utilisateur est un psychologue
+      else{
+        return h.redirect('/profil_psychologue');
+      }
+    }
 
       return h.view('main/login')
     }
