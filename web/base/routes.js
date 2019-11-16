@@ -32,7 +32,8 @@ const Routes = [
     handler:(request,h) =>{
       console.log(request.auth.credentials);
       console.log(request.auth.isAuthenticated);
-      return h.view('client/profil');
+      if(request.auth.credentials.scope=='clientOui') return h.view('client/profil',null,{layout:'clientOui'});
+      else return h.view('client/profil',null,{layout:'clientNon'});
     }
   }
 },
@@ -45,7 +46,8 @@ const Routes = [
       scope:['clientOui','clientNon']
     },
     handler:(request,h) =>{
-      return h.view('client/reservation');
+      if(request.auth.credentials.scope=='clientOui') return h.view('client/reservation',null,{layout:'clientOui'});
+      else return h.view('client/reservation',null,{layout:'clientNon'});
     }
   }
 },
@@ -58,7 +60,7 @@ const Routes = [
       scope:['clientOui']
     },
     handler:(request,h) =>{
-      return h.view('client/calendar');
+      return h.view('client/calendar',null,{layout:'clientOui'});
     }
   }
 },
@@ -71,7 +73,7 @@ const Routes = [
       scope:['psychologue']
     },
     handler:(request,h) =>{
-      return h.view('psychologue/profil');
+      return h.view('psychologue/profil',null,{layout:'psychologue'});
     }
   }
 },
@@ -84,7 +86,7 @@ const Routes = [
       scope:['psychologue']
     },
     handler:(request,h) =>{
-      return h.view('psychologue/clients_recherche');
+      return h.view('psychologue/clients_recherche',null,{layout:'psychologue'});
     }
   }
 },
@@ -97,7 +99,7 @@ const Routes = [
       scope:['psychologue']
     },
     handler:(request,h) =>{
-      return h.view('psychologue/calendar');
+      return h.view('psychologue/calendar',null,{layout:'psychologue'});
     }
   }
 },
