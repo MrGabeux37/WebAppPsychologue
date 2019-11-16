@@ -14,50 +14,91 @@ const Routes = [
 {
   method: 'GET',
   path: '/createaccount',
-  handler: (request, h) => {
-    return h.view('main/createaccount');
+  config:{
+    auth:false,
+    handler: (request, h) => {
+      return h.view('main/createaccount');
+    }
   }
 },
 {
   method: 'GET',
   path: '/profil',
-  handler:(request,h) =>{
-    return h.view('client/profil');
+  config:{
+    auth:{
+      strategy:'session',
+      scope:['clientOui','clientNon']
+    },
+    handler:(request,h) =>{
+      console.log(request.auth.credentials);
+      console.log(request.auth.isAuthenticated);
+      return h.view('client/profil');
+    }
   }
 },
 {
   method: 'GET',
   path: '/reservation',
-  handler:(request,h) =>{
-    return h.view('client/reservation');
+  config:{
+    auth:{
+      strategy:'session',
+      scope:['clientOui','clientNon']
+    },
+    handler:(request,h) =>{
+      return h.view('client/reservation');
+    }
   }
 },
 {
   method: 'GET',
   path: '/calendrier',
-  handler:(request,h) =>{
-    return h.view('client/calendar');
+  config:{
+    auth:{
+      strategy:'session',
+      scope:['clientOui']
+    },
+    handler:(request,h) =>{
+      return h.view('client/calendar');
+    }
   }
 },
 {
   method: 'GET',
   path: '/profil_psychologue',
-  handler:(request,h) =>{
-    return h.view('psychologue/profil');
+  config:{
+    auth:{
+      strategy:'session',
+      scope:['psychologue']
+    },
+    handler:(request,h) =>{
+      return h.view('psychologue/profil');
+    }
   }
 },
 {
   method: 'GET',
   path: '/clients',
-  handler:(request,h) =>{
-    return h.view('psychologue/clients_recherche');
+  config:{
+    auth:{
+      strategy:'session',
+      scope:['psychologue']
+    },
+    handler:(request,h) =>{
+      return h.view('psychologue/clients_recherche');
+    }
   }
 },
 {
   method: 'GET',
   path: '/calendrier_psychologue',
-  handler:(request,h) =>{
-    return h.view('psychologue/calendar');
+  config:{
+    auth:{
+      strategy:'session',
+      scope:['psychologue']
+    },
+    handler:(request,h) =>{
+      return h.view('psychologue/calendar');
+    }
   }
 },
 
@@ -81,16 +122,19 @@ const Routes = [
 {
   method: 'POST',
   path: '/register',
-  handler: (request, h) =>{
-    const payload = request.payload;
-    console.log(payload);
+  config:{
+    auth:false,
+    handler: (request, h) =>{
+      const payload = request.payload;
+      console.log(payload);
 
-    //encription du mot de passe
-    var password=md5(payload.mot_de_passe[1]);
+      //encription du mot de passe
+      var password=md5(payload.mot_de_passe[1]);
 
-    return h.view('main/login');
+      return h.view('main/login');
 
-  }
+    }
+  },
 },
 {
   method: 'POST',
@@ -109,24 +153,44 @@ const Routes = [
      if (request.auth.isAuthenticated) {
         return h.view('client/profil')
       }
+      var scope="";
       var inputCourriel = request.payload.inputCourriel;
       var inputPassword = md5(request.payload.inputPassword);
 
-      var user = await Client.findOne({
+      var user=await Client.findOne({
         where:{courriel: inputCourriel}
       });
 
       if(!user){
-        console.log(user);
-        return Boom.notFound('Personne avec ce courriel')
+        user=await Psychologue.findOne({
+          where:{courriel:inputCourriel}
+        })
+        if(!user){
+          return Boom.notFound('Personne avec ce courriel')
+        }
       }
+
       if(inputPassword==user.mot_de_passe){
-        console.log(user);
+        console.log(user.mot_de_passe);
         console.log(inputPassword);
-        request.server.log('info','user authentication successful')
-        request.cookieAuth.set(user);
-        console.log(request.auth.isAuthenticated);
-        return h.redirect('/profil').rewritable().temporary();
+        if(user.prefix=='C'){
+          request.server.log('info','user authentication successful')
+          if(user.permission==false)scope="clientNon";
+          else scope="clientOui";
+          request.cookieAuth.set({
+            id : user.id_client,
+            scope : scope
+          });
+          return h.redirect('/profil');
+        }
+        if(user.prefix=='PS'){
+          request.server.log('info','user authentication successful')
+          request.cookieAuth.set({
+            id : user.id_psychologue,
+            scope: "psychologue"
+          });
+          return h.redirect('/profil_psychologue');
+        }
       }
       console.log(request.auth.isAuthenticated);
       return h.view('main/login');
@@ -148,7 +212,7 @@ const Routes = [
     },
     handler: function (request, h) {
     if (request.auth.isAuthenticated) {
-        return h.redirect('/profil').rewritable().temporary();
+        return h.redirect('/profil');
 
       }
 
@@ -165,7 +229,7 @@ const Routes = [
       // clear the session data
       request.cookieAuth.clear()
 
-      return h.redirect('/').rewritable().temporary();
+      return h.redirect('/');
     }
   }
 }

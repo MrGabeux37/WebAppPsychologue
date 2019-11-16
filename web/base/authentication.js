@@ -12,13 +12,14 @@ async function register (server, options) {
     cookie:{
       password:'m!*"2/),p4:xDs%KEgVr7;e#85Ah^WYC',
       name:'sid',
-      isSecure: false
+      isSecure: false,
+      isSameSite:'Lax'
     },
     redirectTo: '/',
 
   });
 
-  //server.auth.default('session');
+  server.auth.default('session');
 
 }
 
