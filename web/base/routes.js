@@ -105,30 +105,31 @@ const Routes = [
         redirectTo: false
       }
     },
-    handler: function (request,h){
+    handler: async function (request,h){
      if (request.auth.isAuthenticated) {
         return h.view('client/profil')
       }
-      var courriel = request.payload.inputCourriel;
-      var password = md5(request.payload.inputPassword);
+      var inputCourriel = request.payload.inputCourriel;
+      var inputPassword = md5(request.payload.inputPassword);
 
-      if(!user || !user.lenght){
+      var user = await Client.findOne({
+        where:{courriel: inputCourriel}
+      });
+
+      if(!user){
+        console.log(user);
         return Boom.notFound('Personne avec ce courriel')
       }
-      if(password==user[0].mot_de_passe){
-        console.log(user[0]);
-        console.log(user[0].mot_de_passe);
-        console.log(password);
+      if(inputPassword==user.mot_de_passe){
+        console.log(user);
+        console.log(inputPassword);
         request.server.log('info','user authentication successful')
-        request.cookieAuth.set(user[0]);
+        request.cookieAuth.set(user);
         console.log(request.auth.isAuthenticated);
-        return h.view('client/profil')
+        return h.redirect('/profil').rewritable().temporary();
       }
-    })
-
       console.log(request.auth.isAuthenticated);
       return h.view('main/login');
-
     }
   }
 },
@@ -147,7 +148,7 @@ const Routes = [
     },
     handler: function (request, h) {
     if (request.auth.isAuthenticated) {
-        return h.view('client/profile')
+        return h.redirect('/profil').rewritable().temporary();
 
       }
 
@@ -164,7 +165,7 @@ const Routes = [
       // clear the session data
       request.cookieAuth.clear()
 
-      return 'Logged out. See you around :)'
+      return h.redirect('/').rewritable().temporary();
     }
   }
 }
