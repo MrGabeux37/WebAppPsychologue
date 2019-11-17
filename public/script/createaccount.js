@@ -6,9 +6,11 @@ function CheckPW(){
 
   if(firstPW!=confirmPW){
     document.getElementById("alertPW").innerHTML="Mots de passe non identiques ";
+    document.getElementById("bouton").disabled=true;
   }
   else{
     document.getElementById("alertPW").innerHTML="";
+    document.getElementById("bouton").disabled=false;
   }
 
 
