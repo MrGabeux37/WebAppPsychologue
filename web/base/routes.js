@@ -33,6 +33,7 @@ const Routes = [
     }
   }
 },
+//route d'affichage du profil client
 {
   method: 'GET',
   path: '/profil',
@@ -41,14 +42,133 @@ const Routes = [
       strategy:'session',
       scope:['clientOui','clientNon']
     },
-    handler:(request,h) =>{
-      if(request.auth.credentials.scope=='clientOui') return h.view('client/profil',null,{layout:'clientOui'});
-      else return h.view('client/profil',null,{layout:'clientNon'});
+    handler:async (request,h) =>{
+      //initialisation du code html.
+      var data,sexeEnfantF,sexeEnfantM,htmlParent2,sexeParent1M,sexeParent1F;
+      //initialisation des objets
+      var usager,enfant,parent1,parent2
+      //trouve le client dans la bd
+      usager= await Client.findOne({where:{id_client:request.auth.credentials.id}});
+
+      enfant= await Client.findOne({where:{id_parent1:usager.id_client}});
+
+      if(!enfant){
+        enfant= await Client.findOne({where:{id_parent2:usager.id_client}});
+        if(!enfant){
+          enfant=usager;
+          parent1 = await Client.findOne({where:{id_client:enfant.id_parent1}});
+          parent2 = await Client.findOne({where:{id_client:enfant.id_parent2}});
+        }
+        else{
+          parent2 = usager;
+          parent1 = await Client.findOne({where:{id_client:enfant.id_parent1}});
+        }
+      }
+      else{
+        parent1 = usager;
+        parent2 = await Client.findOne({where:{id_client:enfant.id_parent2}});
+      }
+      if(enfant.sexe=='M')sexeEnfantM='checked';
+      else sexeEnfantF='checked';
+      if(parent1.sexe=='M')sexeParent1M='checked';
+      else sexeParent1F='checked';
+
+      if(parent2){
+        var sexeParent2M,sexeParent2F;
+        if(parent2.sexe=='M')sexeParent2M='checked';
+        else sexeParent2F='checked';
+        htmlParent2='<h6 class="text-center mb-3">Parent 2</h6><div class="row"><div class="col"><label for="nom_parent2">Nom:</label><input type="text" class="form-control" name="nom_parent2" value="'+parent2.nom+'"></div><div class="col"><label for="prenom_parent2">Prénom:</label><input type="text" class="form-control" name="prenom_parent2" value="'+parent2.prenom+'"></div></div><div class="row mt-2"><div class="col"><label for="date_de_naissance_parent2">Date de naissance: </label><input type="date" class="form-control" name="date_de_naissance_parent2" value="'+parent2.date_de_naissance+'"></div><div class="col"><label for="sexe_parent2">Sexe: </label> <br><input type="radio" id="btnradio" class="form-check-input ml-2" name="sexe_parent2" value="M" '+sexeParent2M+'><label for="sexe_parent2" class="ml-4">Homme</label><input type="radio" id="btnradio" class="form-check-input ml-2" name="sexe_parent2" value="F" '+sexeParent2F+'><label for="sexe_parent2" class="ml-4">Femme</label></div></div><div class="row mt-2"><div class="col"><label for="courriel_parent2">Courriel:</label><input type="email" class="form-control" name="courriel_parent2" value="'+parent2.courriel+'"></div><div class="col"><label for="prenom_parent2">Téléphone:</label><input type="tel" class="form-control" name="num_telephone_parent2" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"value="'+parent2.num_telephone+'"></div></div><hr class="mt-4">'
+      }
+
+      data={
+        enfantNom:'<input type="text" class="form-control" name="nom_enfant" value="'+enfant.nom+'">',
+        enfantPrenom:'<input type="text" class="form-control" name="prenom_enfant" value="'+enfant.prenom+'">',
+        dateEnfant:'<input type="date" class="form-control" name="date_de_naissance_enfant" value="'+enfant.date_de_naissance+'">',
+        courrielEnfant:'<input type="email" class="form-control" name="courriel_enfant" value="'+enfant.courriel+'">',
+        sexeEnfantF:sexeEnfantF,
+        sexeEnfantM:sexeEnfantM,
+        parent1Nom:'<input type="text" class="form-control" name="nom_parent1" value="'+parent1.nom+'">',
+        parent1Prenom:'<input type="text" class="form-control" name="prenom_parent1" value="'+parent1.prenom+'">',
+        dateParent1:'<input type="date" class="form-control" name="date_de_naissance_parent1" value="'+parent1.date_de_naissance+'">',
+        courrielParent1:'<input type="email" class="form-control" name="courriel_parent1" value="'+parent1.courriel+'">',
+        sexeParent1F:sexeParent1F,
+        sexeParent1M:sexeParent1M,
+        numTelParent1:'<input type="tel" class="form-control" name="num_telephone_parent1" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" value="'+parent1.num_telephone+'">',
+        htmlParent2:htmlParent2
+      }
 
 
+      //etablis le bon layout
+      if(request.auth.credentials.scope=='clientOui') return h.view('client/profil',data,{layout:'clientOui'});
+      else return h.view('client/profil',data,{layout:'clientNon'});
     }
   }
 },
+{
+  method: 'POST',
+  path: '/profil_update',
+  config:{
+    auth:{
+      strategy:'session',
+      scope:['clientOui','clientNon']
+    },
+    handler:async (request,h) =>{
+      //initialisation des objets
+      var usager,enfant,parent1,parent2
+      //trouve le client dans la bd
+      usager= await Client.findOne({where:{id_client:request.auth.credentials.id}});
+
+      enfant= await Client.findOne({where:{id_parent1:usager.id_client}});
+
+      if(!enfant){
+        enfant= await Client.findOne({where:{id_parent2:usager.id_client}});
+        if(!enfant){
+          enfant=usager;
+          parent1 = await Client.findOne({where:{id_client:enfant.id_parent1}});
+          parent2 = await Client.findOne({where:{id_client:enfant.id_parent2}});
+        }
+        else{
+          parent2 = usager;
+          parent1 = await Client.findOne({where:{id_client:enfant.id_parent1}});
+        }
+      }
+      else{
+        parent1 = usager;
+        parent2 = await Client.findOne({where:{id_client:enfant.id_parent2}});
+      }
+
+      const payload = request.payload;
+
+      if(parent2){
+        parent2.nom=payload.nom_parent2;
+        parent2.prenom=payload.prenom_parent2;
+        parent2.date_de_naissance=payload.date_de_naissance_parent2;
+        parent2.sexe=payload.sexe_parent2;
+        parent2.courriel=payload.courriel_parent2;
+        parent2.num_telephone=payload.num_telephone_parent2;
+        parent2.save();
+      }
+
+      parent1.nom=payload.nom_parent1;
+      parent1.prenom=payload.prenom_parent1;
+      parent1.date_de_naissance=payload.date_de_naissance_parent1;
+      parent1.sexe=payload.sexe_parent1;
+      parent1.courriel=payload.courriel_parent1;
+      parent1.num_telephone=payload.num_telephone;
+      enfant.nom=payload.nom_enfant;
+      enfant.prenom=payload.prenom_enfant;
+      enfant.date_de_naissance=payload.date_de_naissance_enfant;
+      enfant.sexe=payload.sexe_enfant;
+      enfant.courriel=payload.courriel_enfant;
+      enfant.num_telephone=payload.num_telephone_parent1;
+
+      parent1.save();
+      enfant.save();
+      return h.redirect('/profil')
+    }
+  }
+},
+
 {
   method: 'GET',
   path: '/reservation',
@@ -134,7 +254,7 @@ const Routes = [
     handler: async (request, h) =>{
       //récupération des données entrées dans le formulaire
       const payload = request.payload;
-      console.log(payload);
+      //initialisation des variables
       var parent1,parent2,enfant;
       var password_parent1=null;
       var password_parent2=null;
@@ -202,7 +322,7 @@ const Routes = [
         });
       }
 
-      return h.view('main/login');
+      return h.redirect('/');
     }
   },
 },
