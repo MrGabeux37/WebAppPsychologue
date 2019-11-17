@@ -11,6 +11,7 @@ const PlageHoraire = require('./models/plagehoraire.js');
 const RendezVous = require('./models/rendezvous.js');
 
 const Routes = [
+//route vers la page de creation de compte
 {
   method: 'GET',
   path: '/createaccount',
@@ -43,6 +44,8 @@ const Routes = [
     handler:(request,h) =>{
       if(request.auth.credentials.scope=='clientOui') return h.view('client/profil',null,{layout:'clientOui'});
       else return h.view('client/profil',null,{layout:'clientNon'});
+
+
     }
   }
 },
@@ -122,6 +125,7 @@ const Routes = [
   },
   handler:Handlers.servePublicDirectory
 },
+//route creation de compte
 {
   method: 'POST',
   path: '/register',
@@ -171,13 +175,14 @@ const Routes = [
         permission:false,
         mot_de_passe:password_parent1
       })
+      //sauvegarde dans la bd et ajout de id_parent1 à l'enfant
       parent1.save().then(function(id1){
         enfant.update({
           id_parent1:id1.id_client
         })
       });
 
-      if(payload.famillecheck==false){
+      if(!payload.famillecheck){
       //creation de l'objet parent2
         parent2 = await Client.build({
           nom:payload.nom_parent2,
@@ -189,6 +194,7 @@ const Routes = [
           permission:false,
           mot_de_passe:password_parent2
         })
+        //sauvegarde dans la bd et ajout de id_parent2 à l'enfant
         parent2.save().then(function(id2){
           enfant.update({
             id_parent2:id2.id_client
@@ -200,6 +206,7 @@ const Routes = [
     }
   },
 },
+//route de connection
 {
   method: 'POST',
   path: '/login',
@@ -276,6 +283,7 @@ const Routes = [
     }
   }
 },
+//route page d'accueil
 {
   method: 'GET',
   path: '/',
@@ -305,6 +313,7 @@ const Routes = [
     }
   }
 },
+//route de deconnection
 {
   method: 'GET',
   path: '/private-route',
@@ -318,8 +327,6 @@ const Routes = [
     }
   }
 }
-
 ];
-
 
 module.exports = Routes
