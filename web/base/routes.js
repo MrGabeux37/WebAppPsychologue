@@ -9,6 +9,8 @@ const Client = require('./models/client.js');
 const Psychologue = require('./models/psychologue.js');
 const PlageHoraire = require('./models/plagehoraire.js');
 const RendezVous = require('./models/rendezvous.js');
+const Sequelize =require('sequelize');
+const Op = Sequelize.Op;
 
 const Routes = [
 //route vers la page de creation de compte
@@ -104,6 +106,7 @@ const Routes = [
     }
   }
 },
+//route update du profil client
 {
   method: 'POST',
   path: '/profil_update',
@@ -168,7 +171,7 @@ const Routes = [
     }
   }
 },
-
+//page des réservations des clients
 {
   method: 'GET',
   path: '/reservation',
@@ -183,6 +186,7 @@ const Routes = [
     }
   }
 },
+//page des disponibilités des réservations des clients
 {
   method: 'GET',
   path: '/calendrier',
@@ -196,6 +200,7 @@ const Routes = [
     }
   }
 },
+//route du profil du psychologue
 {
   method: 'GET',
   path: '/profil_psychologue',
@@ -204,11 +209,46 @@ const Routes = [
       strategy:'session',
       scope:['psychologue']
     },
-    handler:(request,h) =>{
-      return h.view('psychologue/profil',null,{layout:'psychologue'});
+    handler:async (request,h) =>{
+      var data,nom,prenom,courriel,telephone;
+      var psychologue = await Psychologue.findOne({where:{id_psychologue:request.auth.credentials.id}});
+
+      data={
+        nom:'<input type="text" class="form-control" name="nom_psycologue" value="'+ psychologue.nom +'">',
+        prenom:'<input type="text" class="form-control" name="prenom_psychologue" value="'+ psychologue.prenom +'">',
+        courriel:'<input type="email" class="form-control" name="courriel_psychologue" value="'+ psychologue.courriel +'">',
+        telephone:'<input type="tel" class="form-control" name="num_telephone_psychologue" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" value="'+ psychologue.num_telephone +'">'
+      }
+
+
+      return h.view('psychologue/profil',data,{layout:'psychologue'});
     }
   }
 },
+//update profil psychologue
+{
+  method: 'POST',
+  path: '/profil_psychologue/update',
+  config:{
+    auth:{
+      strategy:'session',
+      scope:['psychologue']
+    },
+    handler:async (request,h) =>{
+      var psychologue = await Psychologue.findOne({where:{id_psychologue:request.auth.credentials.id}});
+      const payload = request.payload;
+
+      psychologue.nom=payload.nom_psycologue;
+      psychologue.prenom=payload.prenom_psychologue;
+      psychologue.courriel=payload.courriel_psychologue;
+      psychologue.num_telephone=payload.num_telephone_psychologue;
+
+      psychologue.save();
+      return h.redirect('/profil_psychologue');
+    }
+  }
+},
+//page recherche des clients
 {
   method: 'GET',
   path: '/clients',
@@ -217,11 +257,89 @@ const Routes = [
       strategy:'session',
       scope:['psychologue']
     },
-    handler:(request,h) =>{
-      return h.view('psychologue/clients_recherche',null,{layout:'psychologue'});
+    handler:async(request,h) =>{
+      const payload = request.query;
+      var data,name,resultat;
+      var variable = payload.nom_enfant;
+      var clients = await Client.findAll({
+        where:{
+          id_parent1:
+            {
+              [Op.not]:null
+            }
+        },
+        order:[
+          ['nom','ASC']
+        ]
+      })
+
+      console.log(clients);
+
+      resultat='';
+
+      for(var i=0;i<clients.length;i++){
+        resultat+='<div class="row"><div class="col">';
+        resultat+='<a href="'+ clients[i].id_client +'" style="color: black; text-decoration: none;">Nom: '+clients[i].nom+'</a></div>';
+        resultat+='<div class="col"><a href="'+ clients[i].id_client +'" style="color: black; text-decoration: none;">Prénom: '+clients[i].prenom+'</a></div>';
+        resultat+='<div class="row mt-2"><div class="col">';
+        resultat+='<a href="'+ clients[i].id_client +'" style="color: black; text-decoration: none;">Date de naissance: '+clients[i].date_de_naissance+' </a></div>'
+
+        var permission='';
+        if(clients[i].permission)permission='Oui';
+        else permission='Non';
+
+        resultat+='<div class="col"><a href="'+ clients[i].id_client +'" style="color: black; text-decoration: none;">Permisson: '+permission+' </a>'
+        resultat+='</div></div><hr class="mt-4">';
+      }
+
+      console.log(resultat);
+      var data={
+        name:"",
+        resultat:resultat
+      }
+      return h.view('psychologue/clients_recherche',data,{layout:'psychologue'});
     }
   }
 },
+//resultat de recherche
+{
+  method: 'GET',
+  path: '/clients_recherche',
+  config:{
+    auth:{
+      strategy:'session',
+      scope:['psychologue']
+    },
+    handler: async (request,h) =>{
+      const payload = request.query;
+      var data,name,resultat;
+      var variable = payload.nom_enfant;
+      var clients = await Client.findAll({
+        where:{
+          id_parent1:
+            {
+              [Op.not]:null
+            }
+        },
+        order:[
+          ['nom','ASC']
+        ]
+      })
+
+      console.log(clients);
+
+
+
+      data={
+        name:payload.nom_enfant,
+
+      }
+
+      return h.view('psychologue/clients_recherche',data,{layout:'psychologue'});
+    }
+  }
+},
+//page des réservations pour le psychologue
 {
   method: 'GET',
   path: '/calendrier_psychologue',
@@ -235,7 +353,6 @@ const Routes = [
     }
   }
 },
-
 //Servir fichier Static
 {
   method: 'GET',

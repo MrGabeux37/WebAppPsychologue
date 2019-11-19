@@ -6,7 +6,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-  <script src="../../script/profil.Client.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
@@ -23,10 +22,10 @@
 
       <div class="card-body" id="body">
 
-        <form class="form-inline" action="/clients" method="get">
+        <form class="form-inline" action="/clients_recherche" method="get">
           <div class="row">
             <div class="col">
-              <input class="form-control" type="text" placeholder="Entrez le nom de l'enfant">
+              <input class="form-control" style="width:225px" type="text" name="nom_enfant" placeholder="Nom ou prenom de l'enfant" value="{{name}}" required>
               <button class="btn btn-primary" type="submit">Chercher</button>
             </div>
           </div>
@@ -34,6 +33,7 @@
 
         <hr class="mt-4">
 
+        {{{resultat}}}
 
 
       </div>

@@ -22,27 +22,27 @@
       </div>
 
       <div class="card-body">
-        <form action="/profil_psychologue" method="post">
+        <form action="/profil_psychologue/update" method="post">
 
           <div class="row">
             <div class="col">
               <label for="nom_psychologue">Nom:</label>
-              <input type="text" class="form-control" name="nom_psycologue">
+              {{{nom}}}
             </div>
             <div class="col">
               <label for="prenom_psychologue">Prénom:</label>
-              <input type="text" class="form-control" name="prenom_psychologue">
+              {{{prenom}}}
             </div>
           </div>
 
           <div class="row mt-2">
             <div class="col">
               <label for="courriel_psychologue">Courriel:</label>
-              <input type="email" class="form-control" name="courriel_psychologue">
+              {{{courriel}}}
             </div>
             <div class="col">
-              <label for="prenom_psychologue">Téléphone:</label>
-              <input type="tel" class="form-control" name="num_telephone_psychologue" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}">
+              <label for="num_telephone_psychologue">Téléphone:</label>
+              {{{telephone}}}
             </div>
           </div>
 
