@@ -273,22 +273,21 @@ const Routes = [
         ]
       })
 
-      console.log(clients);
-
       resultat='';
 
+      //construit le html pour chaque client resultat de la requete plus haute
       for(var i=0;i<clients.length;i++){
         resultat+='<div class="row"><div class="col">';
-        resultat+='<a href="'+ clients[i].id_client +'" style="color: black; text-decoration: none;">Nom: '+clients[i].nom+'</a></div>';
-        resultat+='<div class="col"><a href="'+ clients[i].id_client +'" style="color: black; text-decoration: none;">Prénom: '+clients[i].prenom+'</a></div> </div>';
+        resultat+='<a href="/clients/'+ clients[i].id_client +'" style="color: black; text-decoration: none;">Nom: '+clients[i].nom+'</a></div>';
+        resultat+='<div class="col"><a href=/clients/"'+ clients[i].id_client +'" style="color: black; text-decoration: none;">Prénom: '+clients[i].prenom+'</a></div> </div>';
         resultat+='<div class="row mt-2"><div class="col">';
-        resultat+='<a href="'+ clients[i].id_client +'" style="color: black; text-decoration: none;">Date de naissance: '+clients[i].date_de_naissance+' </a></div>'
+        resultat+='<a href=/clients/"'+ clients[i].id_client +'" style="color: black; text-decoration: none;">Date de naissance: '+clients[i].date_de_naissance+' </a></div>'
 
         var permission='';
         if(clients[i].permission)permission='Oui';
         else permission='Non';
 
-        resultat+='<div class="col"><a href="'+ clients[i].id_client +'" style="color: black; text-decoration: none;">Permisson: '+permission+' </a>'
+        resultat+='<div class="col"><a href=/clients/"'+ clients[i].id_client +'" style="color: black; text-decoration: none;">Permisson: '+permission+' </a>'
         resultat+='</div></div><hr class="mt-4">';
       }
 
@@ -297,6 +296,55 @@ const Routes = [
         resultat:resultat
       }
       return h.view('psychologue/clients_recherche',data,{layout:'psychologue'});
+    }
+  }
+},
+{
+  method: 'GET',
+  path: '/clients/{id*}',
+  config:{
+    auth:{
+      strategy:'session',
+      scope:['psychologue']
+    },
+    handler:async(request,h) =>{
+      const payload=request.params || {};
+      console.log(payload.id);
+
+      //initialisation du code html.
+      var data,htmlParent2;
+      //initialisation des objets
+      var usager,enfant,parent1,parent2
+      //trouve le client dans la bd
+
+      enfant = await Client.findOne({where:{id_client:payload.id}});
+      parent1 = await Client.findOne({where:{id_client:enfant.id_parent1}});
+      parent2 = await Client.findOne({where:{id_client:enfant.id_parent2}});
+
+
+      if(parent2){
+        htmlParent2='<hr class="mt-4"><h6 class="text-center mb-3">Parent 2</h6><div class="row"><div class="col"><label for="nom_parent2">Nom:</label><input type="text" class="form-control" name="nom_parent2" value="'+parent2.nom+'"></div><div class="col"><label for="prenom_parent2">Prénom:</label><input type="text" class="form-control" name="prenom_parent2" value="'+parent2.prenom+'"></div></div><div class="row mt-2"><div class="col-6"><label for="date_de_naissance_parent2">Date de naissance: </label><input type="date" class="form-control" name="date_de_naissance_parent2" value="'+parent2.date_de_naissance+'"></div></div><div class="row mt-2"><div class="col"><label for="courriel_parent2">Courriel:</label><input type="email" class="form-control" name="courriel_parent2" value="'+parent2.courriel+'"></div><div class="col"><label for="prenom_parent2">Téléphone:</label><input type="tel" class="form-control" name="num_telephone_parent2" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"value="'+parent2.num_telephone+'"></div></div>'
+      }
+
+      var reference='/profil_update/'+ enfant.id_client;
+
+      data={
+        enfantNom:'<input type="text" class="form-control" name="nom_enfant" value="'+enfant.nom+'">',
+        enfantPrenom:'<input type="text" class="form-control" name="prenom_enfant" value="'+enfant.prenom+'">',
+        dateEnfant:'<input type="date" class="form-control" name="date_de_naissance_enfant" value="'+enfant.date_de_naissance+'">',
+        courrielEnfant:'<input type="email" class="form-control" name="courriel_enfant" value="'+enfant.courriel+'">',
+        parent1Nom:'<input type="text" class="form-control" name="nom_parent1" value="'+parent1.nom+'">',
+        parent1Prenom:'<input type="text" class="form-control" name="prenom_parent1" value="'+parent1.prenom+'">',
+        dateParent1:'<input type="date" class="form-control" name="date_de_naissance_parent1" value="'+parent1.date_de_naissance+'">',
+        courrielParent1:'<input type="email" class="form-control" name="courriel_parent1" value="'+parent1.courriel+'">',
+        numTelParent1:'<input type="tel" class="form-control" name="num_telephone_parent1" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" value="'+parent1.num_telephone+'">',
+        htmlParent2:htmlParent2,
+        reference:reference,
+        permissionEnfant:'<div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="customSwitch1" checked><label class="custom-control-label" for="customSwitch1">Si activé, ce client a la permission de prendre rendez-vous</label></div>'
+      }
+
+
+      return h.view('psychologue/clients_profil',data,{layout:'psychologue'});
     }
   }
 },
@@ -313,6 +361,7 @@ const Routes = [
       const payload = request.query;
       var data,name,resultat;
       var variable = payload.nom_enfant;
+      //requete pour trouver les enfants ayant les lettres entrées dans leur nom ou leur prenom
       var client = await Client.findAll({
         where:[
           {
@@ -338,22 +387,21 @@ const Routes = [
         ]
       })
 
-      console.log(client);
-
       resultat='';
 
+      //construit le html pour chaque client resultat de la requete plus haute
       for(var i=0;i<client.length;i++){
         resultat+='<div class="row"><div class="col">';
-        resultat+='<a href="'+ client[i].id_client +'" style="color: black; text-decoration: none;">Nom: '+client[i].nom+'</a></div>';
-        resultat+='<div class="col"><a href="'+ client[i].id_client +'" style="color: black; text-decoration: none;">Prénom: '+client[i].prenom+'</a></div> </div>';
+        resultat+='<a href="/clients/'+ client[i].id_client +'" style="color: black; text-decoration: none;">Nom: '+client[i].nom+'</a></div>';
+        resultat+='<div class="col"><a href=/clients/"'+ client[i].id_client +'" style="color: black; text-decoration: none;">Prénom: '+client[i].prenom+'</a></div> </div>';
         resultat+='<div class="row mt-2"><div class="col">';
-        resultat+='<a href="'+ client[i].id_client +'" style="color: black; text-decoration: none;">Date de naissance: '+client[i].date_de_naissance+' </a></div>'
+        resultat+='<a href=/clients/"'+ client[i].id_client +'" style="color: black; text-decoration: none;">Date de naissance: '+client[i].date_de_naissance+' </a></div>'
 
         var permission='';
         if(client[i].permission)permission='Oui';
         else permission='Non';
 
-        resultat+='<div class="col"><a href="'+ client[i].id_client +'" style="color: black; text-decoration: none;">Permisson: '+permission+' </a>'
+        resultat+='<div class="col"><a href=/clients/"'+ client[i].id_client +'" style="color: black; text-decoration: none;">Permisson: '+permission+' </a>'
         resultat+='</div></div><hr class="mt-4">';
       }
 

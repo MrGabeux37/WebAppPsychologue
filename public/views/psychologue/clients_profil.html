@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <title>Accueil Manon Psychologie pour Enfants</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+</head>
+
+<div class="row">
+  <div class="col-sm-12 sol-md-10 col-lg-8 mx-auto">
+    <div class="card mt-5">
+
+      <div class="card-header">
+        <h4 class="text-center">Profil des Clients</h4>
+      </div>
+
+      <div class="card-body" id="body">
+
+        <form action="{{reference}}" method="post">
+
+          <h6 class="text-center mb-1"> Enfant </h6>
+
+          <div class="row">
+            <div class="col">
+              <label for="nom_enfant">Nom:</label>
+              {{{enfantNom}}}
+            </div>
+            <div class="col">
+              <label for="prenom_enfant">Prénom:</label>
+              {{{enfantPrenom}}}
+            </div>
+          </div>
+
+          <div class="row mt-2">
+            <div class="col">
+              <label for="date_de_naissance_enfant">Date de naissance: </label>
+              {{{dateEnfant}}}
+            </div>
+            <div class="col">
+              <label for="Permission_enfant">Permission:</label>
+              {{{permissionEnfant}}}
+            </div>
+          </div>
+
+          <div class="row mt-2">
+            <div class="col">
+              <label for="courriel_enfant">Courriel:</label>
+              {{{courrielEnfant}}}
+            </div>
+          </div>
+
+          <hr class="mt-4">
+
+          <h6 class="text-center mb-3">Parent</h6>
+
+          <div class="row">
+            <div class="col">
+              <label for="nom_parent1">Nom:</label>
+              {{{parent1Nom}}}
+            </div>
+            <div class="col">
+              <label for="prenom_parent1">Prénom:</label>
+              {{{parent1Prenom}}}
+            </div>
+          </div>
+
+          <div class="row mt-2">
+            <div class="col-6">
+              <label for="date_de_naissance_parent1">Date de naissance: </label>
+              {{{dateParent1}}}
+            </div>
+          </div>
+
+          <div class="row mt-2">
+            <div class="col">
+              <label for="courriel_parent1">Courriel:</label>
+              {{{courrielParent1}}}
+            </div>
+            <div class="col">
+              <label for="prenom_parent1">Téléphone:</label>
+              {{{numTelParent1}}}
+            </div>
+          </div>
+
+          {{{htmlParent2}}}
+
+          <div class="row mt-2">
+            <div class="col text-center">
+              <button type="submit" class="btn btn-primary center-block mt-2">Modifier</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
