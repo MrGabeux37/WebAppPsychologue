@@ -280,7 +280,7 @@ const Routes = [
       for(var i=0;i<clients.length;i++){
         resultat+='<div class="row"><div class="col">';
         resultat+='<a href="'+ clients[i].id_client +'" style="color: black; text-decoration: none;">Nom: '+clients[i].nom+'</a></div>';
-        resultat+='<div class="col"><a href="'+ clients[i].id_client +'" style="color: black; text-decoration: none;">Prénom: '+clients[i].prenom+'</a></div>';
+        resultat+='<div class="col"><a href="'+ clients[i].id_client +'" style="color: black; text-decoration: none;">Prénom: '+clients[i].prenom+'</a></div> </div>';
         resultat+='<div class="row mt-2"><div class="col">';
         resultat+='<a href="'+ clients[i].id_client +'" style="color: black; text-decoration: none;">Date de naissance: '+clients[i].date_de_naissance+' </a></div>'
 
@@ -292,7 +292,6 @@ const Routes = [
         resultat+='</div></div><hr class="mt-4">';
       }
 
-      console.log(resultat);
       var data={
         name:"",
         resultat:resultat
@@ -314,25 +313,53 @@ const Routes = [
       const payload = request.query;
       var data,name,resultat;
       var variable = payload.nom_enfant;
-      var clients = await Client.findAll({
-        where:{
-          id_parent1:
-            {
-              [Op.not]:null
-            }
-        },
+      var client = await Client.findAll({
+        where:[
+          {
+            [Op.or]:
+              [
+                {
+                  nom:{[Op.like]:'%'+payload.nom_enfant+'%'}
+                },
+                {
+                  prenom:{[Op.like]:'%'+payload.nom_enfant+'%'}
+                }
+              ]
+          },
+          {
+            id_parent1:
+              {
+                [Op.not]:null
+              }
+          }
+        ],
         order:[
           ['nom','ASC']
         ]
       })
 
-      console.log(clients);
+      console.log(client);
 
+      resultat='';
 
+      for(var i=0;i<client.length;i++){
+        resultat+='<div class="row"><div class="col">';
+        resultat+='<a href="'+ client[i].id_client +'" style="color: black; text-decoration: none;">Nom: '+client[i].nom+'</a></div>';
+        resultat+='<div class="col"><a href="'+ client[i].id_client +'" style="color: black; text-decoration: none;">Prénom: '+client[i].prenom+'</a></div> </div>';
+        resultat+='<div class="row mt-2"><div class="col">';
+        resultat+='<a href="'+ client[i].id_client +'" style="color: black; text-decoration: none;">Date de naissance: '+client[i].date_de_naissance+' </a></div>'
 
-      data={
+        var permission='';
+        if(client[i].permission)permission='Oui';
+        else permission='Non';
+
+        resultat+='<div class="col"><a href="'+ client[i].id_client +'" style="color: black; text-decoration: none;">Permisson: '+permission+' </a>'
+        resultat+='</div></div><hr class="mt-4">';
+      }
+
+      var data={
         name:payload.nom_enfant,
-
+        resultat:resultat
       }
 
       return h.view('psychologue/clients_recherche',data,{layout:'psychologue'});
