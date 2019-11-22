@@ -171,21 +171,6 @@ const Routes = [
     }
   }
 },
-//page des réservations des clients
-{
-  method: 'GET',
-  path: '/reservation',
-  config:{
-    auth:{
-      strategy:'session',
-      scope:['clientOui','clientNon']
-    },
-    handler:(request,h) =>{
-      if(request.auth.credentials.scope=='clientOui') return h.view('client/reservation',null,{layout:'clientOui'});
-      else return h.view('client/reservation',null,{layout:'clientNon'});
-    }
-  }
-},
 //page des disponibilités des réservations des clients
 {
   method: 'GET',
@@ -195,8 +180,358 @@ const Routes = [
       strategy:'session',
       scope:['clientOui']
     },
-    handler:(request,h) =>{
-      return h.view('client/calendar',null,{layout:'clientOui'});
+    handler:async(request,h) =>{
+
+      var today=new Date();
+      var htmlResultat='';
+      var reservation = await RendezVous.findAll({
+        where:{
+          [Op.and]:[
+            {disponibilite:{[Op.gt]:0}},
+            {date:{[Op.gte]:today}}
+          ]
+        },
+        order:[
+          ['date','ASC']
+        ]
+      });
+
+      var psychologue = await Psychologue.findOne({where:{id_psychologue:reservation[0].id_psychologue}});
+
+      for(var i=0;i<reservation.length;i++){
+      var plage= await PlageHoraire.findOne({where:{id_plage_horaire:reservation[i].id_plage_horaire}});
+      var month;
+      var annee = reservation[i].date.substring(0,4);
+      var mois = reservation[i].date.substring(5,7);
+      var jour = reservation[i].date.substring(8);
+      var heureDebut = plage.heure_debut.substring(0,5);
+      var heureFin = plage.heure_fin.substring(0,5);
+
+        switch(mois){
+          case '01':month='Janvier';break;
+          case '02':month='Février';break;
+          case '03':month='Mars';break;
+          case '04':month='Avril';break;
+          case '05':month='Mai';break;
+          case '06':month='Juin';break;
+          case '07':month='Juillet';break;
+          case '08':month='Août';break;
+          case '09':month='Septembre';break;
+          case '10':month='Octobre';break;
+          case '11':month='Novembre';break;
+          case '12':month='Décembre';break;
+          default:'does not exist';
+        }
+        var date = jour + ' ' + month + ' ' + annee ;
+
+        console.log(mois);
+
+        htmlResultat+='<div class="row ml-4"><div class="col-4"><p>ID Rendez-Vous: '+ reservation[i].id_rendez_vous +'</p></div>';
+        htmlResultat+='<div class="col-7 ml-2"><p>Psychologue: '+ psychologue.prenom +' '+ psychologue.nom +'</p></div></div>';
+        htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Date: '+ date +'</p></div>';
+        htmlResultat+='<div class="col-7 ml-2"><p>Heure: '+ heureDebut +' à '+ heureFin +'</p></div></div>';
+        htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Ville: '+ reservation[i].ville +'</p></div>';
+        htmlResultat+='<div class="col-7 ml-2"><p>Adresse: '+ reservation[i].adresse +'</p></div></div>';
+        htmlResultat+='<a href="/calendrier/'+ reservation[i].id_rendez_vous +'" class="btn btn-primary" role="button">Reserver</a><hr class="mt-4">';
+      }
+
+      var data={
+        resultat:htmlResultat
+      }
+
+      return h.view('client/calendar',data,{layout:'clientOui'});
+    }
+  }
+},
+{
+  method: 'POST',
+  path: '/calendrier/{id*}',
+  config:{
+    auth:{
+      strategy:'session',
+      scope:['clientOui']
+    },
+    handler:async(request,h) =>{
+
+
+      return h.redirect('/client/calendar',data,{layout:'clientOui'});
+    }
+  }
+},
+//page des réservations des clients
+{
+  method: 'GET',
+  path: '/reservation',
+  config:{
+    auth:{
+      strategy:'session',
+      scope:['clientOui','clientNon']
+    },
+    handler:async(request,h) =>{
+      var usager= await Client.findOne({where:{id_client:request.auth.credentials.id}});
+      var parent1,parent2;
+      var enfant= await Client.findOne({where:{id_parent1:usager.id_client}});
+
+      if(!enfant){
+        enfant= await Client.findOne({where:{id_parent2:usager.id_client}});
+        if(!enfant){
+          enfant=usager;
+          parent1 = await Client.findOne({where:{id_client:enfant.id_parent1}});
+          parent2 = await Client.findOne({where:{id_client:enfant.id_parent2}});
+        }
+        else{
+          parent2 = usager;
+          parent1 = await Client.findOne({where:{id_client:enfant.id_parent1}});
+        }
+      }
+      else{
+        parent1 = usager;
+        parent2 = await Client.findOne({where:{id_client:enfant.id_parent2}});
+      }
+
+      var today=new Date();
+      var htmlResultat='';
+      var reservation = await RendezVous.findAll({
+        where:{id_client:enfant.id_client},
+        order:[
+          ['date','ASC']
+        ]
+      });
+
+      var psychologue = await Psychologue.findOne({where:{id_psychologue:reservation[0].id_psychologue}});
+
+      for(var i=0;i<reservation.length;i++){
+      var plage= await PlageHoraire.findOne({where:{id_plage_horaire:reservation[i].id_plage_horaire}});
+      var month;
+      var annee = reservation[i].date.substring(0,4);
+      var mois = reservation[i].date.substring(5,7);
+      var jour = reservation[i].date.substring(8);
+      var heureDebut = plage.heure_debut.substring(0,5);
+      var heureFin = plage.heure_fin.substring(0,5);
+
+        switch(mois){
+          case '01':month='Janvier';break;
+          case '02':month='Février';break;
+          case '03':month='Mars';break;
+          case '04':month='Avril';break;
+          case '05':month='Mai';break;
+          case '06':month='Juin';break;
+          case '07':month='Juillet';break;
+          case '08':month='Août';break;
+          case '09':month='Septembre';break;
+          case '10':month='Octobre';break;
+          case '11':month='Novembre';break;
+          case '12':month='Décembre';break;
+          default:'does not exist';
+        }
+        var date = jour + ' ' + month + ' ' + annee ;
+
+        console.log(mois);
+
+        htmlResultat+='<div class="row ml-4"><div class="col-4"><p>ID Rendez-Vous: '+ reservation[i].id_rendez_vous +'</p></div>';
+        htmlResultat+='<div class="col-7 ml-2"><p>Psychologue: '+ psychologue.prenom +' '+ psychologue.nom +'</p></div></div>';
+        htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Date: '+ date +'</p></div>';
+        htmlResultat+='<div class="col-7 ml-2"><p>Heure: '+ heureDebut +' à '+ heureFin +'</p></div></div>';
+        htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Ville: '+ reservation[i].ville +'</p></div>';
+        htmlResultat+='<div class="col-7 ml-2"><p>Adresse: '+ reservation[i].adresse +'</p></div></div><hr class="mt-4">';
+
+      }
+
+      var data={
+        resultat:htmlResultat
+      }
+
+
+      if(request.auth.credentials.scope=='clientOui') return h.view('client/reservation',data,{layout:'clientOui'});
+      else return h.view('client/reservation',data,{layout:'clientNon'});
+    }
+  }
+},
+//affiche les reservation future du client
+{
+  method: 'GET',
+  path: '/reservation/future',
+  config:{
+    auth:{
+      strategy:'session',
+      scope:['clientOui','clientNon']
+    },
+    handler:async(request,h) =>{
+      var usager= await Client.findOne({where:{id_client:request.auth.credentials.id}});
+      var parent1,parent2;
+      var enfant= await Client.findOne({where:{id_parent1:usager.id_client}});
+
+      if(!enfant){
+        enfant= await Client.findOne({where:{id_parent2:usager.id_client}});
+        if(!enfant){
+          enfant=usager;
+          parent1 = await Client.findOne({where:{id_client:enfant.id_parent1}});
+          parent2 = await Client.findOne({where:{id_client:enfant.id_parent2}});
+        }
+        else{
+          parent2 = usager;
+          parent1 = await Client.findOne({where:{id_client:enfant.id_parent1}});
+        }
+      }
+      else{
+        parent1 = usager;
+        parent2 = await Client.findOne({where:{id_client:enfant.id_parent2}});
+      }
+
+      var today=new Date();
+      var htmlResultat='';
+      var reservation = await RendezVous.findAll({
+        where:{
+          [Op.and]:[
+            {id_client:enfant.id_client},
+            {date:{[Op.gte]:today}}
+          ]
+        },
+        order:[
+          ['date','ASC']
+        ]
+      });
+
+      var psychologue = await Psychologue.findOne({where:{id_psychologue:reservation[0].id_psychologue}});
+
+      for(var i=0;i<reservation.length;i++){
+      var plage= await PlageHoraire.findOne({where:{id_plage_horaire:reservation[i].id_plage_horaire}});
+      var month;
+      var annee = reservation[i].date.substring(0,4);
+      var mois = reservation[i].date.substring(5,7);
+      var jour = reservation[i].date.substring(8);
+      var heureDebut = plage.heure_debut.substring(0,5);
+      var heureFin = plage.heure_fin.substring(0,5);
+
+        switch(mois){
+          case '01':month='Janvier';break;
+          case '02':month='Février';break;
+          case '03':month='Mars';break;
+          case '04':month='Avril';break;
+          case '05':month='Mai';break;
+          case '06':month='Juin';break;
+          case '07':month='Juillet';break;
+          case '08':month='Août';break;
+          case '09':month='Septembre';break;
+          case '10':month='Octobre';break;
+          case '11':month='Novembre';break;
+          case '12':month='Décembre';break;
+          default:'does not exist';
+        }
+        var date = jour + ' ' + month + ' ' + annee ;
+
+        console.log(mois);
+
+        htmlResultat+='<div class="row ml-4"><div class="col-4"><p>ID Rendez-Vous: '+ reservation[i].id_rendez_vous +'</p></div>';
+        htmlResultat+='<div class="col-7 ml-2"><p>Psychologue: '+ psychologue.prenom +' '+ psychologue.nom +'</p></div></div>';
+        htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Date: '+ date +'</p></div>';
+        htmlResultat+='<div class="col-7 ml-2"><p>Heure: '+ heureDebut +' à '+ heureFin +'</p></div></div>';
+        htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Ville: '+ reservation[i].ville +'</p></div>';
+        htmlResultat+='<div class="col-7 ml-2"><p>Adresse: '+ reservation[i].adresse +'</p></div></div><hr class="mt-4">';
+
+      }
+
+      var data={
+        resultat:htmlResultat
+      }
+
+
+      if(request.auth.credentials.scope=='clientOui') return h.view('client/reservation',data,{layout:'clientOui'});
+      else return h.view('client/reservation',data,{layout:'clientNon'});
+    }
+  }
+},
+//affiche les réservations anciennes du client
+{
+  method: 'GET',
+  path: '/reservation/ancienne',
+  config:{
+    auth:{
+      strategy:'session',
+      scope:['clientOui','clientNon']
+    },
+    handler:async(request,h) =>{
+      var usager= await Client.findOne({where:{id_client:request.auth.credentials.id}});
+      var parent1,parent2;
+      var enfant= await Client.findOne({where:{id_parent1:usager.id_client}});
+
+      if(!enfant){
+        enfant= await Client.findOne({where:{id_parent2:usager.id_client}});
+        if(!enfant){
+          enfant=usager;
+          parent1 = await Client.findOne({where:{id_client:enfant.id_parent1}});
+          parent2 = await Client.findOne({where:{id_client:enfant.id_parent2}});
+        }
+        else{
+          parent2 = usager;
+          parent1 = await Client.findOne({where:{id_client:enfant.id_parent1}});
+        }
+      }
+      else{
+        parent1 = usager;
+        parent2 = await Client.findOne({where:{id_client:enfant.id_parent2}});
+      }
+
+      var today=new Date();
+      var htmlResultat='';
+      var reservation = await RendezVous.findAll({
+        where:{
+          [Op.and]:[
+            {id_client:enfant.id_client},
+            {date:{[Op.lt]:today}}
+          ]
+        },
+        order:[
+          ['date','DESC']
+        ]
+      });
+
+      var psychologue = await Psychologue.findOne({where:{id_psychologue:reservation[0].id_psychologue}});
+
+      for(var i=0;i<reservation.length;i++){
+      var plage= await PlageHoraire.findOne({where:{id_plage_horaire:reservation[i].id_plage_horaire}});
+      var month;
+      var annee = reservation[i].date.substring(0,4);
+      var mois = reservation[i].date.substring(5,7);
+      var jour = reservation[i].date.substring(8);
+      var heureDebut = plage.heure_debut.substring(0,5);
+      var heureFin = plage.heure_fin.substring(0,5);
+
+        switch(mois){
+          case '01':month='Janvier';break;
+          case '02':month='Février';break;
+          case '03':month='Mars';break;
+          case '04':month='Avril';break;
+          case '05':month='Mai';break;
+          case '06':month='Juin';break;
+          case '07':month='Juillet';break;
+          case '08':month='Août';break;
+          case '09':month='Septembre';break;
+          case '10':month='Octobre';break;
+          case '11':month='Novembre';break;
+          case '12':month='Décembre';break;
+          default:'does not exist';
+        }
+        var date = jour + ' ' + month + ' ' + annee ;
+
+        console.log(mois);
+
+        htmlResultat+='<div class="row ml-4"><div class="col-4"><p>ID Rendez-Vous: '+ reservation[i].id_rendez_vous +'</p></div>';
+        htmlResultat+='<div class="col-7 ml-2"><p>Psychologue: '+ psychologue.prenom +' '+ psychologue.nom +'</p></div></div>';
+        htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Date: '+ date +'</p></div>';
+        htmlResultat+='<div class="col-7 ml-2"><p>Heure: '+ heureDebut +' à '+ heureFin +'</p></div></div>';
+        htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Ville: '+ reservation[i].ville +'</p></div>';
+        htmlResultat+='<div class="col-7 ml-2"><p>Adresse: '+ reservation[i].adresse +'</p></div></div><hr class="mt-4">';
+
+      }
+
+      var data={
+        resultat:htmlResultat
+      }
+
+
+      if(request.auth.credentials.scope=='clientOui') return h.view('client/reservation',data,{layout:'clientOui'});
+      else return h.view('client/reservation',data,{layout:'clientNon'});
     }
   }
 },
@@ -411,7 +746,7 @@ const Routes = [
     }
   }
 },
-//resultat de recherche
+//resultat de recherche dans les enfants
 {
   method: 'GET',
   path: '/clients_recherche',

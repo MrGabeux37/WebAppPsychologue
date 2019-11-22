@@ -11,7 +11,7 @@ const RendezVous = sequelize.define('rendezvous',{
     autoIncrement: true,
     unique: true
   },
-  perfix:{
+  prefix:{
     type:Sequelize.STRING,
     defaultValue: 'R'
   },
