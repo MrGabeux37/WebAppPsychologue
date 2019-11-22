@@ -299,6 +299,7 @@ const Routes = [
     }
   }
 },
+//interface du profil client du cote psychologue
 {
   method: 'GET',
   path: '/clients/{id*}',
@@ -314,7 +315,7 @@ const Routes = [
       //initialisation du code html.
       var data,htmlParent2;
       //initialisation des objets
-      var usager,enfant,parent1,parent2
+      var enfant,parent1,parent2
       //trouve le client dans la bd
 
       enfant = await Client.findOne({where:{id_client:payload.id}});
@@ -327,6 +328,10 @@ const Routes = [
       }
 
       var reference='/profil_update/'+ enfant.id_client;
+      var check='';
+
+      if(enfant.permission)check='checked';
+      else check='';
 
       data={
         enfantNom:'<input type="text" class="form-control" name="nom_enfant" value="'+enfant.nom+'">',
@@ -340,11 +345,69 @@ const Routes = [
         numTelParent1:'<input type="tel" class="form-control" name="num_telephone_parent1" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" value="'+parent1.num_telephone+'">',
         htmlParent2:htmlParent2,
         reference:reference,
-        permissionEnfant:'<div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="customSwitch1" checked><label class="custom-control-label" for="customSwitch1">Si activé, ce client a la permission de prendre rendez-vous</label></div>'
+        permissionEnfant:'<div class="custom-control custom-switch"><input type="checkbox" name="permission" class="custom-control-input" id="customSwitch1" value="oui" '+ check +'><label class="custom-control-label" for="customSwitch1">Si activé, ce client a la permission de prendre rendez-vous</label></div>'
       }
 
 
       return h.view('psychologue/clients_profil',data,{layout:'psychologue'});
+    }
+  }
+},
+//update le profil d'un client cote psychologue
+{
+  method: 'POST',
+  path: '/profil_update/{id*}',
+  config:{
+    auth:{
+      strategy:'session',
+      scope:['psychologue']
+    },
+    handler:async(request,h) =>{
+      const param=request.params || {};
+      console.log(param.id);
+
+      const payload = request.payload;
+      console.log(payload);
+
+      var enfant = await Client.findOne({where:{id_client:param.id}});
+      var parent1 = await Client.findOne({where:{id_client:enfant.id_parent1}});
+      var parent2 = await Client.findOne({where:{id_client:enfant.id_parent2}});
+
+      console.log(enfant.id_client);
+
+      var check;
+      if(payload.permission=='oui')check=true;
+      else check=false;
+
+      if(parent2){
+        parent2.nom=payload.nom_parent2;
+        parent2.prenom=payload.prenom_parent2;
+        parent2.date_de_naissance=payload.date_de_naissance_parent2;
+        parent2.courriel=payload.courriel_parent2;
+        parent2.num_telephone=payload.num_telephone_parent2;
+        parent2.permission=check;
+        parent2.save();
+      }
+
+      parent1.nom=payload.nom_parent1;
+      parent1.prenom=payload.prenom_parent1;
+      parent1.date_de_naissance=payload.date_de_naissance_parent1;
+      parent1.courriel=payload.courriel_parent1;
+      parent1.permission=check;
+      parent1.num_telephone=payload.num_telephone;
+      enfant.nom=payload.nom_enfant;
+      enfant.prenom=payload.prenom_enfant;
+      enfant.date_de_naissance=payload.date_de_naissance_enfant;
+      enfant.permission=check;
+      enfant.courriel=payload.courriel_enfant;
+      enfant.num_telephone=payload.num_telephone_parent1;
+
+      enfant.save();
+      parent1.save();
+
+      var reference= '/clients/' + enfant.id_client;
+
+      return h.redirect(reference);
     }
   }
 },
