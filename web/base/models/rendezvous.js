@@ -22,7 +22,10 @@ const RendezVous = sequelize.define('rendezvous',{
     type:Sequelize.BOOLEAN,
     defaultValue: true
   },
-  note:{type:Sequelize.STRING},
+  note:{
+    type:Sequelize.STRING,
+    allowNull:true,
+  },
   id_psychologue:{
     type:Sequelize.INTEGER,
     references:{

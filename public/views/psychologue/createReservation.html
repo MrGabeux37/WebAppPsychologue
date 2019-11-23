@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <title>Accueil Manon Psychologie pour Enfants</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="../../script/profil.Client.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+</head>
+
+<div class="row">
+  <div class="col-sm-12 sol-md-10 col-lg-8 mx-auto">
+    <div class="card mt-5">
+
+      <div class="card-header">
+        <h4 class="text-center">Les Rendez-Vous</h4>
+      </div>
+
+      <div class="card-body">
+
+        <div class="row">
+          <div class="col">
+            <a href="/calendrier_psychologue/anciens" type="button" class="btn btn-primary center-block mt-2">Rendez-vous Anciens</a>
+            <a href="/calendrier_psychologue/futures" type="button" class="btn btn-primary center-block mt-2">Rendez-vous Futures</a>
+            <a href="/calendrier_psychologue/disponnible" type="button" class="btn btn-primary center-block mt-2">Rendez-vous Disponnible</a>
+            <a href="/calendrier_psychologue/create" type="button" class="btn btn-primary center-block mt-2">+</a>
+          </div>
+        </div>
+
+        <hr class="mt-4">
+
+        <form action="/calendrier_psychologue/create/RV" method="post">
+          <div class="row">
+            <div class="col">
+            <label for="date_rv">Date du rendezvous: </label>
+            <input type="date" class="form-control" name="date_rv" placeholder="aaaa-mm-jj" required>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col">
+                <label for="hrDebut">Heure de Début:</label>
+                <select class="form-control" name="hrDebut" id="hrDebut">
+                  {{{choixHrDebut}}}
+                </select>
+            </div>
+            <div class="col">
+                <label for="hrFin">Heure de Fin:</label>
+                <select class="form-control" name="hrFin" id="hrFin">
+                  {{{choixHrFin}}}
+                </select>
+            </div>
+          </div>
+
+          <div class="row mt-2">
+            <div class="col">
+              <label for="adresse">Adresse: </label>
+              <input type="text" class="form-control" name="adresse" value="2 rue du Ruisseau" required>
+            </div>
+            <div class="col">
+              <label for="ville">Ville: </label>
+              <input type="text" class="form-control" name="ville" value="Gatineau" required>
+            </div>
+          </div>
+
+          <div class="form-group mt-2">
+            <label for="id_enfant">ID de l'enfant: </label>
+            <input type="text" class="form-control" name="id_enfant" placeholder="Entrer le numéro d'identifiant de l'enfant (Facultatif)">
+          </div>
+
+          <div class="row mt-2">
+            <div class="col text-center">
+              <button type="submit" class="btn btn-primary center-block mt-2">Créer</button>
+            </div>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
