@@ -684,6 +684,7 @@ const Routes = [
       //initialisation des objets
       var enfant,parent1,parent2
       var htmlResultat='<h6 class="text-center mb-3">Réservations</h6>';
+      htmlResultat+='<div class="col"><a href="/client/ancien/'+ payload.id +'" type="button" class="btn btn-primary m-2">Rendez-vous Anciens</a><a href="/client/future/'+ payload.id +'" type="button" class="btn btn-primary m-2">Rendez-vous Futures</a></div><hr class="mt-4">';
       //trouve le client dans la bd
       enfant = await Client.findOne({where:{id_client:payload.id}});
       parent1 = await Client.findOne({where:{id_client:enfant.id_parent1}});
@@ -696,7 +697,6 @@ const Routes = [
       });
       if(reservation.length==0)htmlResultat+="<div class='text-center'>Ce client n'a pas de réservations</div>";
       else{
-        htmlResultat+='<div class="col"><a href="/client/ancien/'+ payload.id +'" type="button" class="btn btn-primary m-2">Rendez-vous Anciens</a><a href="/client/future/'+ payload.id +'" type="button" class="btn btn-primary m-2">Rendez-vous Futures</a></div><hr class="mt-4">';
         var psychologue = await Psychologue.findOne({where:{id_psychologue:reservation[0].id_psychologue}});
         var today=new Date();
         //construire le html de de chaque rendezvous
@@ -784,6 +784,7 @@ const Routes = [
       //initialisation des objets
       var enfant,parent1,parent2
       var htmlResultat='<h6 class="text-center mb-3">Réservations</h6><hr class="mt-4">';
+      htmlResultat+='<div class="col"><a href="/client/ancien/'+ payload.id +'" type="button" class="btn btn-primary m-2">Rendez-vous Anciens</a><a href="/client/future/'+ payload.id +'" type="button" class="btn btn-primary m-2">Rendez-vous Futures</a></div><hr class="mt-4">';
       //trouve le client dans la bd
       enfant = await Client.findOne({where:{id_client:payload.id}});
       parent1 = await Client.findOne({where:{id_client:enfant.id_parent1}});
@@ -802,7 +803,6 @@ const Routes = [
 
       if(reservation.length==0)htmlResultat+="<div class='text-center'>Ce client n'a pas de réservations</div>";
       else{
-        htmlResultat+='<div class="col"><a href="/client/ancien/'+ payload.id +'" type="button" class="btn btn-primary m-2">Rendez-vous Anciens</a><a href="/client/future/'+ payload.id +'" type="button" class="btn btn-primary m-2">Rendez-vous Futures</a></div><hr class="mt-4">';
         var psychologue = await Psychologue.findOne({where:{id_psychologue:reservation[0].id_psychologue}});
         //construire le html de de chaque rendezvous
         for(var i=0;i<reservation.length;i++){
@@ -889,6 +889,7 @@ const Routes = [
       //initialisation des objets
       var enfant,parent1,parent2
       var htmlResultat='<h6 class="text-center mb-3">Réservations</h6><hr class="mt-4">';
+      htmlResultat+='<div class="col"><a href="/client/ancien/'+ payload.id +'" type="button" class="btn btn-primary m-2">Rendez-vous Anciens</a><a href="/client/future/'+ payload.id +'" type="button" class="btn btn-primary m-2">Rendez-vous Futures</a></div><hr class="mt-4">';
       //trouve le client dans la bd
       enfant = await Client.findOne({where:{id_client:payload.id}});
       parent1 = await Client.findOne({where:{id_client:enfant.id_parent1}});
@@ -909,7 +910,6 @@ const Routes = [
 
       if(reservation.length==0)htmlResultat+="<div class='text-center'>Ce client n'a pas de réservations</div>";
       else{
-        htmlResultat+='<div class="col"><a href="/client/ancien/'+ payload.id +'" type="button" class="btn btn-primary m-2">Rendez-vous Anciens</a><a href="/client/future/'+ payload.id +'" type="button" class="btn btn-primary m-2">Rendez-vous Futures</a></div><hr class="mt-4">';
         var psychologue = await Psychologue.findOne({where:{id_psychologue:reservation[0].id_psychologue}});
         var today=new Date();
         //construire le html de de chaque rendezvous
