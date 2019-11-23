@@ -243,8 +243,9 @@ const Routes = [
     }
   }
 },
+//route update de la réservation du rendezvous
 {
-  method: 'POST',
+  method: 'GET',
   path: '/calendrier/{id*}',
   config:{
     auth:{
@@ -252,9 +253,37 @@ const Routes = [
       scope:['clientOui']
     },
     handler:async(request,h) =>{
+      var param = request.params || {};
+
+      var usager= await Client.findOne({where:{id_client:request.auth.credentials.id}});
+      var enfant= await Client.findOne({where:{id_parent1:usager.id_client}});
+      var parent2, parent1;
+      if(!enfant){
+        enfant= await Client.findOne({where:{id_parent2:usager.id_client}});
+        if(!enfant){
+          enfant=usager;
+          parent1 = await Client.findOne({where:{id_client:enfant.id_parent1}});
+          parent2 = await Client.findOne({where:{id_client:enfant.id_parent2}});
+        }
+        else{
+          parent2 = usager;
+          parent1 = await Client.findOne({where:{id_client:enfant.id_parent1}});
+        }
+      }
+      else{
+        parent1 = usager;
+        parent2 = await Client.findOne({where:{id_client:enfant.id_parent2}});
+      }
 
 
-      return h.redirect('/client/calendar',data,{layout:'clientOui'});
+      var reservation = await RendezVous.findOne({where:{id_rendez_vous:param.id}})
+
+      reservation.id_client=enfant.id_client;
+      reservation.disponibilite=false;
+
+      reservation.save();
+
+      return h.redirect('/calendrier');
     }
   }
 },
@@ -482,7 +511,7 @@ const Routes = [
           ]
         },
         order:[
-          ['date','DESC']
+          ['date','ASC']
         ]
       });
 
@@ -651,12 +680,57 @@ const Routes = [
       var data,htmlParent2;
       //initialisation des objets
       var enfant,parent1,parent2
+      var htmlResultat='<h6 class="text-center mb-3">Réservations</h6><hr class="mt-4">';
       //trouve le client dans la bd
-
       enfant = await Client.findOne({where:{id_client:payload.id}});
       parent1 = await Client.findOne({where:{id_client:enfant.id_parent1}});
       parent2 = await Client.findOne({where:{id_client:enfant.id_parent2}});
+      var reservation = await RendezVous.findAll({
+        where:{id_client:enfant.id_client},
+        order:[
+          ['date','ASC']
+        ]
+      });
 
+      if(reservation.length!=0){
+        var psychologue = await Psychologue.findOne({where:{id_psychologue:reservation[0].id_psychologue}});
+        var today=new Date();
+        //construire le html de de chaque rendezvous
+        for(var i=0;i<reservation.length;i++){
+          var plage= await PlageHoraire.findOne({where:{id_plage_horaire:reservation[i].id_plage_horaire}});
+          var month;
+          var annee = reservation[i].date.substring(0,4);
+          var mois = reservation[i].date.substring(5,7);
+          var jour = reservation[i].date.substring(8);
+          var heureDebut = plage.heure_debut.substring(0,5);
+          var heureFin = plage.heure_fin.substring(0,5);
+
+          switch(mois){
+            case '01':month='Janvier';break;
+            case '02':month='Février';break;
+            case '03':month='Mars';break;
+            case '04':month='Avril';break;
+            case '05':month='Mai';break;
+            case '06':month='Juin';break;
+            case '07':month='Juillet';break;
+            case '08':month='Août';break;
+            case '09':month='Septembre';break;
+            case '10':month='Octobre';break;
+            case '11':month='Novembre';break;
+            case '12':month='Décembre';break;
+            default:'does not exist';
+          }
+          var date = jour + ' ' + month + ' ' + annee ;
+
+          htmlResultat+='<div class="row ml-4"><div class="col-4"><p>ID Rendez-Vous: '+ reservation[i].id_rendez_vous +'</p></div>';
+          htmlResultat+='<div class="col-7 ml-2"><p>Psychologue: '+ psychologue.prenom +' '+ psychologue.nom +'</p></div></div>';
+          htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Date: '+ date +'</p></div>';
+          htmlResultat+='<div class="col-7 ml-2"><p>Heure: '+ heureDebut +' à '+ heureFin +'</p></div></div>';
+          htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Ville: '+ reservation[i].ville +'</p></div>';
+          htmlResultat+='<div class="col-7 ml-2"><p>Adresse: '+ reservation[i].adresse +'</p></div></div><hr class="mt-4">';
+        }
+      }
+      else htmlResultat+="<div class='text-center'>Ce client n'a pas de réservations</div>";
 
       if(parent2){
         htmlParent2='<hr class="mt-4"><h6 class="text-center mb-3">Parent 2</h6><div class="row"><div class="col"><label for="nom_parent2">Nom:</label><input type="text" class="form-control" name="nom_parent2" value="'+parent2.nom+'"></div><div class="col"><label for="prenom_parent2">Prénom:</label><input type="text" class="form-control" name="prenom_parent2" value="'+parent2.prenom+'"></div></div><div class="row mt-2"><div class="col-6"><label for="date_de_naissance_parent2">Date de naissance: </label><input type="date" class="form-control" name="date_de_naissance_parent2" value="'+parent2.date_de_naissance+'"></div></div><div class="row mt-2"><div class="col"><label for="courriel_parent2">Courriel:</label><input type="email" class="form-control" name="courriel_parent2" value="'+parent2.courriel+'"></div><div class="col"><label for="prenom_parent2">Téléphone:</label><input type="tel" class="form-control" name="num_telephone_parent2" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"value="'+parent2.num_telephone+'"></div></div>'
@@ -680,7 +754,8 @@ const Routes = [
         numTelParent1:'<input type="tel" class="form-control" name="num_telephone_parent1" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" value="'+parent1.num_telephone+'">',
         htmlParent2:htmlParent2,
         reference:reference,
-        permissionEnfant:'<div class="custom-control custom-switch"><input type="checkbox" name="permission" class="custom-control-input" id="customSwitch1" value="oui" '+ check +'><label class="custom-control-label" for="customSwitch1">Si activé, ce client a la permission de prendre rendez-vous</label></div>'
+        permissionEnfant:'<div class="custom-control custom-switch"><input type="checkbox" name="permission" class="custom-control-input" id="customSwitch1" value="oui" '+ check +'><label class="custom-control-label" for="customSwitch1">Si activé, ce client a la permission de prendre rendez-vous</label></div>',
+        reservations:htmlResultat
       }
 
 
@@ -821,8 +896,71 @@ const Routes = [
       strategy:'session',
       scope:['psychologue']
     },
-    handler:(request,h) =>{
-      return h.view('psychologue/calendar',null,{layout:'psychologue'});
+    handler:async(request,h) =>{
+      var today=new Date();
+      var htmlResultat='';
+      var reservation = await RendezVous.findAll({
+        where:{date:{[Op.gte]:today}},
+        order:[
+          ['date','ASC']
+        ]
+      });
+      var enfant;
+      var psychologue = await Psychologue.findOne({where:{id_psychologue:reservation[0].id_psychologue}});
+
+      for(var i=0;i<reservation.length;i++){
+        var nom_client='';
+        var prenom_client='';
+        var disponnible='Oui';
+        var plage= await PlageHoraire.findOne({where:{id_plage_horaire:reservation[i].id_plage_horaire}});
+
+        console.log(reservation[i].disponibilite);
+
+        if(reservation[i].disponibilite==false){
+          enfant = await Client.findOne({where:{id_client:reservation[i].id_client}})
+          nom_client = enfant.nom;
+          prenom_client = enfant.prenom;
+          disponnible = 'non'
+        }
+
+        var month;
+        var annee = reservation[i].date.substring(0,4);
+        var mois = reservation[i].date.substring(5,7);
+        var jour = reservation[i].date.substring(8);
+        var heureDebut = plage.heure_debut.substring(0,5);
+        var heureFin = plage.heure_fin.substring(0,5);
+
+          switch(mois){
+            case '01':month='Janvier';break;
+            case '02':month='Février';break;
+            case '03':month='Mars';break;
+            case '04':month='Avril';break;
+            case '05':month='Mai';break;
+            case '06':month='Juin';break;
+            case '07':month='Juillet';break;
+            case '08':month='Août';break;
+            case '09':month='Septembre';break;
+            case '10':month='Octobre';break;
+            case '11':month='Novembre';break;
+            case '12':month='Décembre';break;
+            default:'does not exist';
+          }
+          var date = jour + ' ' + month + ' ' + annee ;
+
+          htmlResultat+='<div class="row ml-4"><div class="col-4"><p>ID Rendez-Vous: '+ reservation[i].id_rendez_vous +'</p></div>';
+          htmlResultat+='<div class="col-7 ml-2"><p>Enfant: '+ prenom_client +' '+ nom_client +'</p></div></div>';
+          htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Date: '+ date +'</p></div>';
+          htmlResultat+='<div class="col-7 ml-2"><p>Heure: '+ heureDebut +' à '+ heureFin +'</p></div></div>';
+          htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Ville: '+ reservation[i].ville +'</p></div>';
+          htmlResultat+='<div class="col-7 ml-2"><p>Adresse: '+ reservation[i].adresse +'</p></div></div>';
+          htmlResultat+='<div class="row ml-4 mt"><div class="col"><p>Disponnible: '+ disponnible +'</p></div></div><hr class="mt-4">';
+        }
+
+      var data={
+        resultat:htmlResultat
+      }
+
+      return h.view('psychologue/calendar',data,{layout:'psychologue'});
     }
   }
 },
