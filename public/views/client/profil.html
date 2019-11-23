@@ -22,31 +22,31 @@
       </div>
 
       <div class="card-body">
-        <form action="/profil" method="post">
+        <form action="/profil_update" method="post">
 
           <h6 class="text-center mb-3">Parent</h6>
 
           <div class="row">
             <div class="col">
               <label for="nom_parent1">Nom:</label>
-              <input type="text" class="form-control" name="nom_parent1">
+              {{{parent1Nom}}}
             </div>
             <div class="col">
               <label for="prenom_parent1">Prénom:</label>
-              <input type="text" class="form-control" name="prenom_parent1">
+              {{{parent1Prenom}}}
             </div>
           </div>
 
           <div class="row mt-2">
             <div class="col">
               <label for="date_de_naissance_parent1">Date de naissance: </label>
-              <input type="date" class="form-control" name="date_de_naissance_parent1">
+              {{{dateParent1}}}
             </div>
             <div class="col">
               <label for="sexe_parent1">Sexe: </label> <br>
-              <input type="radio" id="btnradio" class="form-check-input ml-2" name="sexe_parent1" value="M">
+              <input type="radio" id="btnradio" class="form-check-input ml-2" name="sexe_parent1" value="M" {{sexeParent1M}}>
               <label for="sexe_parent1" class="ml-4">Homme</label>
-              <input type="radio" id="btnradio" class="form-check-input ml-2" name="sexe_parent1" value="F">
+              <input type="radio" id="btnradio" class="form-check-input ml-2" name="sexe_parent1" value="F" {{sexeParent1F}}>
               <label for="sexe_parent1" class="ml-4">Femme</label>
             </div>
           </div>
@@ -54,51 +54,49 @@
           <div class="row mt-2">
             <div class="col">
               <label for="courriel_parent1">Courriel:</label>
-              <input type="email" class="form-control" name="courriel_parent1">
+              {{{courrielParent1}}}
             </div>
             <div class="col">
               <label for="prenom_parent1">Téléphone:</label>
-              <input type="tel" class="form-control" name="num_telephone_parent1" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}">
+              {{{numTelParent1}}}
             </div>
           </div>
 
           <hr class="mt-4">
 
-          <div class="row" id="parent2">
-            <!-- ajout de ce block dans le handler-->
-          </div>
+          {{{htmlParent2}}}
 
           <h6 class="text-center mb-1"> Enfant </h6>
 
           <div class="row">
             <div class="col">
               <label for="nom_enfant">Nom:</label>
-              <input type="text" class="form-control" name="nom_enfant">
+              {{{enfantNom}}}
             </div>
             <div class="col">
               <label for="prenom_enfant">Prénom:</label>
-              <input type="text" class="form-control" name="prenom_enfant">
+              {{{enfantPrenom}}}
             </div>
           </div>
 
           <div class="row mt-2">
             <div class="col">
               <label for="date_de_naissance_enfant">Date de naissance: </label>
-              <input type="date" class="form-control" name="date_de_naissance_enfant">
+              {{{dateEnfant}}}
             </div>
             <div class="col">
-              <label for="sexe_parent1">Sexe: </label><br>
-              <input type="radio" id="btnradio" class="form-check-input ml-2" name="sexe_enfant" value="M">
-              <label for="sexe_parent1" class="ml-4">Garçon</label>
-              <input type="radio" id="btnradio" class="form-check-input ml-2" name="sexe_enfant" value="F">
-              <label for="sexe_parent1" class="ml-4">Fille</label>
+              <label for="sexe_enfant">Sexe: </label><br>
+              <input type="radio" id="btnradio" class="form-check-input ml-2" name="sexe_enfant" value="M" {{sexeEnfantM}}>
+              <label for="sexe_enfant" class="ml-4">Garçon</label>
+              <input type="radio" id="btnradio" class="form-check-input ml-2" name="sexe_enfant" value="F" {{sexeEnfantF}}>
+              <label for="sexe_enfant" class="ml-4">Fille</label>
             </div>
           </div>
 
           <div class="row mt-2">
             <div class="col">
               <label for="courriel_enfant">Courriel:</label>
-              <input type="email" class="form-control" name="courriel_enfant">
+              {{{courrielEnfant}}}
             </div>
           </div>
 

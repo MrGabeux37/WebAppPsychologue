@@ -18,18 +18,21 @@
     <div class="card mt-5">
 
       <div class="card-header">
-        <h4 class="text-center">Réservations</h4>
+        <h4 class="text-center">Vos Réservations</h4>
       </div>
 
       <div class="card-body text-center" id="chaquereservation">
 
         <div class="row">
           <div class="col">
-            <button type="button" class="btn btn-primary center-block mt-2">Anciennes Réservations</button>
-            <button type="button" class="btn btn-primary center-block mt-2">Réservations Futures</button>
-            <button type="button" class="btn btn-primary center-block mt-2">Toutes les Réservations</button>
+            <a href="/reservation/ancienne" type="button" class="btn btn-primary center-block mt-2">Anciennes Réservations</a>
+            <a href="/reservation/future" type="button" class="btn btn-primary center-block mt-2">Réservations Futures</a>
+            <a href="/reservation" type="button" class="btn btn-primary center-block mt-2">Toutes les Réservations</a>
           </div>
         </div>
+        <hr class="mt-4">
+
+        {{{resultat}}}
 
 
       </div>
