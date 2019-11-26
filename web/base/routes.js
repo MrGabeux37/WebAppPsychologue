@@ -1081,13 +1081,13 @@ const Routes = [
       //construit le html pour chaque client resultat de la requete plus haute
       for(var i=0;i<client.length;i++){
         resultat+='<div class="row "><div class="col">';
-        resultat+='<a href="/clients/'+ clients[i].id_client +'" style="color: black; text-decoration: none;">ID: '+clients[i].id_client+'</a></div></div>';
+        resultat+='<a href="/clients/'+ client[i].id_client +'" style="color: black; text-decoration: none;">ID: '+client[i].id_client+'</a></div></div>';
 
         resultat+='<div class="row mt-2"><div class="col">';
-        resultat+='<a href="/clients/'+ clients[i].id_client +'" style="color: black; text-decoration: none;">Nom: '+clients[i].nom+'</a></div>';
-        resultat+='<div class="col"><a href="/clients/'+ clients[i].id_client +'" style="color: black; text-decoration: none;">Prénom: '+clients[i].prenom+'</a></div> </div>';
+        resultat+='<a href="/clients/'+ client[i].id_client +'" style="color: black; text-decoration: none;">Nom: '+client[i].nom+'</a></div>';
+        resultat+='<div class="col"><a href="/clients/'+ client[i].id_client +'" style="color: black; text-decoration: none;">Prénom: '+client[i].prenom+'</a></div> </div>';
         resultat+='<div class="row mt-2"><div class="col">';
-        resultat+='<a href="/clients/'+ clients[i].id_client +'" style="color: black; text-decoration: none;">Date de naissance: '+clients[i].date_de_naissance+' </a></div>'
+        resultat+='<a href="/clients/'+ client[i].id_client +'" style="color: black; text-decoration: none;">Date de naissance: '+client[i].date_de_naissance+' </a></div>'
 
         var permission='';
         if(client[i].permission)permission='Oui';
