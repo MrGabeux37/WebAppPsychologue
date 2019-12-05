@@ -456,7 +456,8 @@ const Routes = [
         htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Date: '+ date +'</p></div>';
         htmlResultat+='<div class="col-7 ml-2"><p>Heure: '+ heureDebut +' à '+ heureFin +'</p></div></div>';
         htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Ville: '+ reservation[i].ville +'</p></div>';
-        htmlResultat+='<div class="col-7 ml-2"><p>Adresse: '+ reservation[i].adresse +'</p></div></div><hr class="mt-4">';
+        htmlResultat+='<div class="col-7 ml-2"><p>Adresse: '+ reservation[i].adresse +'</p></div></div>';
+        htmlResultat+='<div class="row ml-4"><div class="col text-center"><a href="/calendrier/annule/'+ reservation[i].id_rendez_vous +'" class="btn btn-primary" role="button">Annuler</a></div></div><hr class="mt-4">';
 
       }
 
@@ -467,6 +468,25 @@ const Routes = [
 
       if(request.auth.credentials.scope=='clientOui') return h.view('client/reservation',data,{layout:'clientOui'});
       else return h.view('client/reservation',data,{layout:'clientNon'});
+    }
+  }
+},
+//annule réservation client
+{
+  method: 'GET',
+  path: '/calendrier/annule/{id*}',
+  config:{
+    auth:{
+      strategy:'session',
+      scope:['clientOui']
+    },
+    handler:async(request,h) =>{
+      var param = request.params || {};
+      var reservation = await RendezVous.findOne({where:{id_rendez_vous:param.id}});
+
+      reservation.destroy();
+
+      return h.redirect('/reservation/future');
     }
   }
 },
@@ -836,7 +856,8 @@ const Routes = [
           htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Date: '+ date +'</p></div>';
           htmlResultat+='<div class="col-7 ml-2"><p>Heure: '+ heureDebut +' à '+ heureFin +'</p></div></div>';
           htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Ville: '+ reservation[i].ville +'</p></div>';
-          htmlResultat+='<div class="col-7 ml-2"><p>Adresse: '+ reservation[i].adresse +'</p></div></div><hr class="mt-4">';
+          htmlResultat+='<div class="col-7 ml-2"><p>Adresse: '+ reservation[i].adresse +'</p></div></div>';
+          htmlResultat+='<div class="row ml-4"><div class="col text-center"><a href="/client/future/annule/'+ reservation[i].id_rendez_vous +'" class="btn btn-primary" role="button">Annuler</a></div></div><hr class="mt-4">';
         }
       }
 
@@ -868,6 +889,26 @@ const Routes = [
 
 
       return h.view('psychologue/clients_profil',data,{layout:'psychologue'});
+    }
+  }
+},
+//annule rendez-vous future du client
+{
+  method: 'GET',
+  path: '/client/future/annule/{id*}',
+  config:{
+    auth:{
+      strategy:'session',
+      scope:['psychologue']
+    },
+    handler:async(request,h) =>{
+      var param = request.params || {};
+      var reservation = await RendezVous.findOne({where:{id_rendez_vous:param.id}});
+      var enfant = await Client.findOne({where:{id_client:reservation.id_client}});
+
+      reservation.destroy();
+
+      return h.redirect('/client/future/'+enfant.id_client);
     }
   }
 },
@@ -1205,52 +1246,54 @@ const Routes = [
         ]
       });
       var enfant;
-      var psychologue = await Psychologue.findOne({where:{id_psychologue:reservation[0].id_psychologue}});
+      if(reservation.length==0)htmlResultat+="<div class='text-center'>Pas de réservations anciennes</div>";
+      else{
+        var psychologue = await Psychologue.findOne({where:{id_psychologue:reservation[0].id_psychologue}});
+        for(var i=0;i<reservation.length;i++){
+          var nom_client='';
+          var prenom_client='';
+          var disponnible='Oui';
+          var plage= await PlageHoraire.findOne({where:{id_plage_horaire:reservation[i].id_plage_horaire}});
 
-      for(var i=0;i<reservation.length;i++){
-        var nom_client='';
-        var prenom_client='';
-        var disponnible='Oui';
-        var plage= await PlageHoraire.findOne({where:{id_plage_horaire:reservation[i].id_plage_horaire}});
-
-        if(reservation[i].disponibilite==false){
-          enfant = await Client.findOne({where:{id_client:reservation[i].id_client}})
-          nom_client = enfant.nom;
-          prenom_client = enfant.prenom;
-          disponnible = 'Non'
-        }
-
-        var month;
-        var annee = reservation[i].date.substring(0,4);
-        var mois = reservation[i].date.substring(5,7);
-        var jour = reservation[i].date.substring(8);
-        var heureDebut = plage.heure_debut.substring(0,5);
-        var heureFin = plage.heure_fin.substring(0,5);
-
-          switch(mois){
-            case '01':month='Janvier';break;
-            case '02':month='Février';break;
-            case '03':month='Mars';break;
-            case '04':month='Avril';break;
-            case '05':month='Mai';break;
-            case '06':month='Juin';break;
-            case '07':month='Juillet';break;
-            case '08':month='Août';break;
-            case '09':month='Septembre';break;
-            case '10':month='Octobre';break;
-            case '11':month='Novembre';break;
-            case '12':month='Décembre';break;
-            default:'does not exist';
+          if(reservation[i].disponibilite==false){
+            enfant = await Client.findOne({where:{id_client:reservation[i].id_client}})
+            nom_client = enfant.nom;
+            prenom_client = enfant.prenom;
+            disponnible = 'Non'
           }
-          var date = jour + ' ' + month + ' ' + annee ;
 
-          htmlResultat+='<div class="row ml-4"><div class="col-4"><p>ID Rendez-Vous: '+ reservation[i].id_rendez_vous +'</p></div>';
-          htmlResultat+='<div class="col-7 ml-2"><p>Enfant: '+ prenom_client +' '+ nom_client +'</p></div></div>';
-          htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Date: '+ date +'</p></div>';
-          htmlResultat+='<div class="col-7 ml-2"><p>Heure: '+ heureDebut +' à '+ heureFin +'</p></div></div>';
-          htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Ville: '+ reservation[i].ville +'</p></div>';
-          htmlResultat+='<div class="col-7 ml-2"><p>Adresse: '+ reservation[i].adresse +'</p></div></div>';
-          htmlResultat+='<div class="row ml-4 mt"><div class="col"><p>Disponnible: '+ disponnible +'</p></div></div><hr class="mt-4">';
+          var month;
+          var annee = reservation[i].date.substring(0,4);
+          var mois = reservation[i].date.substring(5,7);
+          var jour = reservation[i].date.substring(8);
+          var heureDebut = plage.heure_debut.substring(0,5);
+          var heureFin = plage.heure_fin.substring(0,5);
+
+            switch(mois){
+              case '01':month='Janvier';break;
+              case '02':month='Février';break;
+              case '03':month='Mars';break;
+              case '04':month='Avril';break;
+              case '05':month='Mai';break;
+              case '06':month='Juin';break;
+              case '07':month='Juillet';break;
+              case '08':month='Août';break;
+              case '09':month='Septembre';break;
+              case '10':month='Octobre';break;
+              case '11':month='Novembre';break;
+              case '12':month='Décembre';break;
+              default:'does not exist';
+            }
+            var date = jour + ' ' + month + ' ' + annee ;
+
+            htmlResultat+='<div class="row ml-4"><div class="col-4"><p>ID Rendez-Vous: '+ reservation[i].id_rendez_vous +'</p></div>';
+            htmlResultat+='<div class="col-7 ml-2"><p>Enfant: '+ prenom_client +' '+ nom_client +'</p></div></div>';
+            htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Date: '+ date +'</p></div>';
+            htmlResultat+='<div class="col-7 ml-2"><p>Heure: '+ heureDebut +' à '+ heureFin +'</p></div></div>';
+            htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Ville: '+ reservation[i].ville +'</p></div>';
+            htmlResultat+='<div class="col-7 ml-2"><p>Adresse: '+ reservation[i].adresse +'</p></div></div>';
+            htmlResultat+='<div class="row ml-4 mt"><div class="col"><p>Disponnible: '+ disponnible +'</p></div></div><hr class="mt-4">';
+          }
         }
 
       var data={
@@ -1285,52 +1328,55 @@ const Routes = [
         ]
       });
       var enfant;
-      var psychologue = await Psychologue.findOne({where:{id_psychologue:reservation[0].id_psychologue}});
+      if(reservation.length==0)htmlResultat+="<div class='text-center'>Pas de rendez-vous future</div>";
+      else{
+        var psychologue = await Psychologue.findOne({where:{id_psychologue:reservation[0].id_psychologue}});
+        for(var i=0;i<reservation.length;i++){
+          var nom_client='';
+          var prenom_client='';
+          var disponnible='Oui';
+          var plage= await PlageHoraire.findOne({where:{id_plage_horaire:reservation[i].id_plage_horaire}});
 
-      for(var i=0;i<reservation.length;i++){
-        var nom_client='';
-        var prenom_client='';
-        var disponnible='Oui';
-        var plage= await PlageHoraire.findOne({where:{id_plage_horaire:reservation[i].id_plage_horaire}});
-
-        if(reservation[i].disponibilite==false){
-          enfant = await Client.findOne({where:{id_client:reservation[i].id_client}})
-          nom_client = enfant.nom;
-          prenom_client = enfant.prenom;
-          disponnible = 'Non'
-        }
-
-        var month;
-        var annee = reservation[i].date.substring(0,4);
-        var mois = reservation[i].date.substring(5,7);
-        var jour = reservation[i].date.substring(8);
-        var heureDebut = plage.heure_debut.substring(0,5);
-        var heureFin = plage.heure_fin.substring(0,5);
-
-          switch(mois){
-            case '01':month='Janvier';break;
-            case '02':month='Février';break;
-            case '03':month='Mars';break;
-            case '04':month='Avril';break;
-            case '05':month='Mai';break;
-            case '06':month='Juin';break;
-            case '07':month='Juillet';break;
-            case '08':month='Août';break;
-            case '09':month='Septembre';break;
-            case '10':month='Octobre';break;
-            case '11':month='Novembre';break;
-            case '12':month='Décembre';break;
-            default:'does not exist';
+          if(reservation[i].disponibilite==false){
+            enfant = await Client.findOne({where:{id_client:reservation[i].id_client}})
+            nom_client = enfant.nom;
+            prenom_client = enfant.prenom;
+            disponnible = 'Non'
           }
-          var date = jour + ' ' + month + ' ' + annee ;
 
-          htmlResultat+='<div class="row ml-4"><div class="col-4"><p>ID Rendez-Vous: '+ reservation[i].id_rendez_vous +'</p></div>';
-          htmlResultat+='<div class="col-7 ml-2"><p>Enfant: '+ prenom_client +' '+ nom_client +'</p></div></div>';
-          htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Date: '+ date +'</p></div>';
-          htmlResultat+='<div class="col-7 ml-2"><p>Heure: '+ heureDebut +' à '+ heureFin +'</p></div></div>';
-          htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Ville: '+ reservation[i].ville +'</p></div>';
-          htmlResultat+='<div class="col-7 ml-2"><p>Adresse: '+ reservation[i].adresse +'</p></div></div>';
-          htmlResultat+='<div class="row ml-4"><div class="col"><p>Disponnible: '+ disponnible +'</p></div></div><hr class="mt-4">';
+          var month;
+          var annee = reservation[i].date.substring(0,4);
+          var mois = reservation[i].date.substring(5,7);
+          var jour = reservation[i].date.substring(8);
+          var heureDebut = plage.heure_debut.substring(0,5);
+          var heureFin = plage.heure_fin.substring(0,5);
+
+            switch(mois){
+              case '01':month='Janvier';break;
+              case '02':month='Février';break;
+              case '03':month='Mars';break;
+              case '04':month='Avril';break;
+              case '05':month='Mai';break;
+              case '06':month='Juin';break;
+              case '07':month='Juillet';break;
+              case '08':month='Août';break;
+              case '09':month='Septembre';break;
+              case '10':month='Octobre';break;
+              case '11':month='Novembre';break;
+              case '12':month='Décembre';break;
+              default:'does not exist';
+            }
+            var date = jour + ' ' + month + ' ' + annee ;
+
+            htmlResultat+='<div class="row ml-4"><div class="col-4"><p>ID Rendez-Vous: '+ reservation[i].id_rendez_vous +'</p></div>';
+            htmlResultat+='<div class="col-7 ml-2"><p>Enfant: '+ prenom_client +' '+ nom_client +'</p></div></div>';
+            htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Date: '+ date +'</p></div>';
+            htmlResultat+='<div class="col-7 ml-2"><p>Heure: '+ heureDebut +' à '+ heureFin +'</p></div></div>';
+            htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Ville: '+ reservation[i].ville +'</p></div>';
+            htmlResultat+='<div class="col-7 ml-2"><p>Adresse: '+ reservation[i].adresse +'</p></div></div>';
+            htmlResultat+='<div class="row ml-4"><div class="col"><p>Disponnible: '+ disponnible +'</p></div></div>';
+            htmlResultat+='<div class="row ml-4"><div class="col text-center"><a href="/calendrier_psychologue/futures/annule/'+ reservation[i].id_rendez_vous +'" class="btn btn-primary" role="button">Annuler</a></div></div><hr class="mt-4">';
+          }
         }
 
       var data={
@@ -1338,6 +1384,25 @@ const Routes = [
       }
 
       return h.view('psychologue/calendar',data,{layout:'psychologue'});
+    }
+  }
+},
+//annule rendez-vous future
+{
+  method: 'GET',
+  path: '/calendrier_psychologue/futures/annule/{id*}',
+  config:{
+    auth:{
+      strategy:'session',
+      scope:['psychologue']
+    },
+    handler:async(request,h) =>{
+      var param = request.params || {};
+      var reservation = await RendezVous.findOne({where:{id_rendez_vous:param.id}});
+
+      reservation.destroy();
+
+      return h.redirect('/calendrier_psychologue/futures');
     }
   }
 },
@@ -1365,52 +1430,55 @@ const Routes = [
         ]
       });
       var enfant;
-      var psychologue = await Psychologue.findOne({where:{id_psychologue:reservation[0].id_psychologue}});
+      if(reservation.length==0)htmlResultat+="<div class='text-center'>Pas de rendez-vous disponible</div>";
+      else{
+        var psychologue = await Psychologue.findOne({where:{id_psychologue:reservation[0].id_psychologue}});
+        for(var i=0;i<reservation.length;i++){
+          var nom_client='';
+          var prenom_client='';
+          var disponnible='Oui';
+          var plage= await PlageHoraire.findOne({where:{id_plage_horaire:reservation[i].id_plage_horaire}});
 
-      for(var i=0;i<reservation.length;i++){
-        var nom_client='';
-        var prenom_client='';
-        var disponnible='Oui';
-        var plage= await PlageHoraire.findOne({where:{id_plage_horaire:reservation[i].id_plage_horaire}});
-
-        if(reservation[i].disponibilite==false){
-          enfant = await Client.findOne({where:{id_client:reservation[i].id_client}})
-          nom_client = enfant.nom;
-          prenom_client = enfant.prenom;
-          disponnible = 'Non'
-        }
-
-        var month;
-        var annee = reservation[i].date.substring(0,4);
-        var mois = reservation[i].date.substring(5,7);
-        var jour = reservation[i].date.substring(8);
-        var heureDebut = plage.heure_debut.substring(0,5);
-        var heureFin = plage.heure_fin.substring(0,5);
-
-          switch(mois){
-            case '01':month='Janvier';break;
-            case '02':month='Février';break;
-            case '03':month='Mars';break;
-            case '04':month='Avril';break;
-            case '05':month='Mai';break;
-            case '06':month='Juin';break;
-            case '07':month='Juillet';break;
-            case '08':month='Août';break;
-            case '09':month='Septembre';break;
-            case '10':month='Octobre';break;
-            case '11':month='Novembre';break;
-            case '12':month='Décembre';break;
-            default:'does not exist';
+          if(reservation[i].disponibilite==false){
+            enfant = await Client.findOne({where:{id_client:reservation[i].id_client}})
+            nom_client = enfant.nom;
+            prenom_client = enfant.prenom;
+            disponnible = 'Non'
           }
-          var date = jour + ' ' + month + ' ' + annee ;
 
-          htmlResultat+='<div class="row ml-4"><div class="col-4"><p>ID Rendez-Vous: '+ reservation[i].id_rendez_vous +'</p></div>';
-          htmlResultat+='<div class="col-7 ml-2"><p>Enfant: '+ prenom_client +' '+ nom_client +'</p></div></div>';
-          htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Date: '+ date +'</p></div>';
-          htmlResultat+='<div class="col-7 ml-2"><p>Heure: '+ heureDebut +' à '+ heureFin +'</p></div></div>';
-          htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Ville: '+ reservation[i].ville +'</p></div>';
-          htmlResultat+='<div class="col-7 ml-2"><p>Adresse: '+ reservation[i].adresse +'</p></div></div>';
-          htmlResultat+='<div class="row ml-4"><div class="col"><p>Disponnible: '+ disponnible +'</p></div></div><hr class="mt-4">';
+          var month;
+          var annee = reservation[i].date.substring(0,4);
+          var mois = reservation[i].date.substring(5,7);
+          var jour = reservation[i].date.substring(8);
+          var heureDebut = plage.heure_debut.substring(0,5);
+          var heureFin = plage.heure_fin.substring(0,5);
+
+            switch(mois){
+              case '01':month='Janvier';break;
+              case '02':month='Février';break;
+              case '03':month='Mars';break;
+              case '04':month='Avril';break;
+              case '05':month='Mai';break;
+              case '06':month='Juin';break;
+              case '07':month='Juillet';break;
+              case '08':month='Août';break;
+              case '09':month='Septembre';break;
+              case '10':month='Octobre';break;
+              case '11':month='Novembre';break;
+              case '12':month='Décembre';break;
+              default:'does not exist';
+            }
+            var date = jour + ' ' + month + ' ' + annee ;
+
+            htmlResultat+='<div class="row ml-4"><div class="col-4"><p>ID Rendez-Vous: '+ reservation[i].id_rendez_vous +'</p></div>';
+            htmlResultat+='<div class="col-7 ml-2"><p>Enfant: '+ prenom_client +' '+ nom_client +'</p></div></div>';
+            htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Date: '+ date +'</p></div>';
+            htmlResultat+='<div class="col-7 ml-2"><p>Heure: '+ heureDebut +' à '+ heureFin +'</p></div></div>';
+            htmlResultat+='<div class="row ml-4 mt"><div class="col-4"><p>Ville: '+ reservation[i].ville +'</p></div>';
+            htmlResultat+='<div class="col-7 ml-2"><p>Adresse: '+ reservation[i].adresse +'</p></div></div>';
+            htmlResultat+='<div class="row ml-4"><div class="col"><p>Disponnible: '+ disponnible +'</p></div></div>';
+            htmlResultat+='<div class="row ml-4"><div class="col text-center"><a href="/calendrier_psychologue/disponnible/annule/'+ reservation[i].id_rendez_vous +'" class="btn btn-primary text-center" role="button">Annuler</a></div></div><hr class="mt-4">';
+          }
         }
 
       var data={
@@ -1418,6 +1486,25 @@ const Routes = [
       }
 
       return h.view('psychologue/calendar',data,{layout:'psychologue'});
+    }
+  }
+},
+//annule rendez-vous disponnible
+{
+  method: 'GET',
+  path: '/calendrier_psychologue/disponnible/annule/{id*}',
+  config:{
+    auth:{
+      strategy:'session',
+      scope:['psychologue']
+    },
+    handler:async(request,h) =>{
+      var param = request.params || {};
+      var reservation = await RendezVous.findOne({where:{id_rendez_vous:param.id}});
+
+      reservation.destroy();
+
+      return h.redirect('/calendrier_psychologue/disponnible');
     }
   }
 },

@@ -1,7 +1,7 @@
 const Sequelize =require('sequelize');
 
 //configuration de la connection
-const sequelize= new Sequelize('manon_psychologie', 'root', 'SqlAdmin',{
+const sequelize= new Sequelize('manon_psychologie', 'root', 'SqlAdmin',{ //password
   host:'localhost',
   port:3306,
   dialect:'mysql',
