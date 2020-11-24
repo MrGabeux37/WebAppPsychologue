@@ -1,7 +1,6 @@
 'use strict'
 
 const Hapi = require('hapi');
-const Routes = require('./web/base/routes');
 
 const server = new Hapi.Server({
   host: 'localhost',
