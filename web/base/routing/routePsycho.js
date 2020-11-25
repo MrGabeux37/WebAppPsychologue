@@ -250,7 +250,7 @@ module.exports = [
           ]
         });
 
-        if(reservation.length==0)htmlResultat+="<div class='text-center'>Ce client n'a pas de réservations</div>";
+        if(reservation.length<=0)htmlResultat+="<div class='text-center'>Ce client n'a pas de réservations</div>";
         else{
           var psychologue = await Psychologue.findOne({where:{id_psychologue:reservation[0].id_psychologue}});
           //construire le html de de chaque rendezvous
@@ -378,7 +378,7 @@ module.exports = [
           ]
         });
 
-        if(reservation.length==0)htmlResultat+="<div class='text-center'>Ce client n'a pas de réservations</div>";
+        if(reservation.length<=0)htmlResultat+="<div class='text-center'>Ce client n'a pas de réservations</div>";
         else{
           var psychologue = await Psychologue.findOne({where:{id_psychologue:reservation[0].id_psychologue}});
           var today=new Date();
@@ -594,44 +594,46 @@ module.exports = [
             ['date','ASC']
           ]
         });
+
         var enfant;
         var psychologue = await Psychologue.findOne({where:{id_psychologue:reservation[0].id_psychologue}});
+        if(reservation.length<=0)htmlResultat+="<div class='text-center'>Ce client n'a pas de réservations</div>";
+        else{
+          for(var i=0;i<reservation.length;i++){
+            var nom_client='';
+            var prenom_client='';
+            var disponnible='Oui';
+            var plage= await PlageHoraire.findOne({where:{id_plage_horaire:reservation[i].id_plage_horaire}});
 
-        for(var i=0;i<reservation.length;i++){
-          var nom_client='';
-          var prenom_client='';
-          var disponnible='Oui';
-          var plage= await PlageHoraire.findOne({where:{id_plage_horaire:reservation[i].id_plage_horaire}});
-
-          if(reservation[i].disponibilite==false){
-            enfant = await Client.findOne({where:{id_client:reservation[i].id_client}})
-            nom_client = enfant.nom;
-            prenom_client = enfant.prenom;
-            disponnible = 'Non'
-          }
-
-          var month;
-          var annee = reservation[i].date.substring(0,4);
-          var mois = reservation[i].date.substring(5,7);
-          var jour = reservation[i].date.substring(8);
-          var heureDebut = plage.heure_debut.substring(0,5);
-          var heureFin = plage.heure_fin.substring(0,5);
-
-            switch(mois){
-              case '01':month='Janvier';break;
-              case '02':month='Février';break;
-              case '03':month='Mars';break;
-              case '04':month='Avril';break;
-              case '05':month='Mai';break;
-              case '06':month='Juin';break;
-              case '07':month='Juillet';break;
-              case '08':month='Août';break;
-              case '09':month='Septembre';break;
-              case '10':month='Octobre';break;
-              case '11':month='Novembre';break;
-              case '12':month='Décembre';break;
-              default:'does not exist';
+            if(reservation[i].disponibilite==false){
+              enfant = await Client.findOne({where:{id_client:reservation[i].id_client}})
+              nom_client = enfant.nom;
+              prenom_client = enfant.prenom;
+              disponnible = 'Non'
             }
+
+            var month;
+            var annee = reservation[i].date.substring(0,4);
+            var mois = reservation[i].date.substring(5,7);
+            var jour = reservation[i].date.substring(8);
+            var heureDebut = plage.heure_debut.substring(0,5);
+            var heureFin = plage.heure_fin.substring(0,5);
+
+              switch(mois){
+                case '01':month='Janvier';break;
+                case '02':month='Février';break;
+                case '03':month='Mars';break;
+                case '04':month='Avril';break;
+                case '05':month='Mai';break;
+                case '06':month='Juin';break;
+                case '07':month='Juillet';break;
+                case '08':month='Août';break;
+                case '09':month='Septembre';break;
+                case '10':month='Octobre';break;
+                case '11':month='Novembre';break;
+                case '12':month='Décembre';break;
+                default:'does not exist';
+              }
             var date = jour + ' ' + month + ' ' + annee ;
 
             htmlResultat+='<div class="row ml-4"><div class="col-4"><p>ID Rendez-Vous: '+ reservation[i].id_rendez_vous +'</p></div>';
@@ -642,6 +644,7 @@ module.exports = [
             htmlResultat+='<div class="col-7 ml-2"><p>Adresse: '+ reservation[i].adresse +'</p></div></div>';
             htmlResultat+='<div class="row ml-4 mt"><div class="col"><p>Disponnible: '+ disponnible +'</p></div></div><hr class="mt-4">';
           }
+        }
 
         var data={
           resultat:htmlResultat
@@ -675,7 +678,7 @@ module.exports = [
           ]
         });
         var enfant;
-        if(reservation.length==0)htmlResultat+="<div class='text-center'>Pas de réservations anciennes</div>";
+        if(reservation.length<=0)htmlResultat+="<div class='text-center'>Pas de réservations anciennes</div>";
         else{
           var psychologue = await Psychologue.findOne({where:{id_psychologue:reservation[0].id_psychologue}});
           for(var i=0;i<reservation.length;i++){
@@ -757,7 +760,7 @@ module.exports = [
           ]
         });
         var enfant;
-        if(reservation.length==0)htmlResultat+="<div class='text-center'>Pas de rendez-vous future</div>";
+        if(reservation.length<=0)htmlResultat+="<div class='text-center'>Pas de rendez-vous future</div>";
         else{
           var psychologue = await Psychologue.findOne({where:{id_psychologue:reservation[0].id_psychologue}});
           for(var i=0;i<reservation.length;i++){
@@ -859,7 +862,7 @@ module.exports = [
           ]
         });
         var enfant;
-        if(reservation.length==0)htmlResultat+="<div class='text-center'>Pas de rendez-vous disponible</div>";
+        if(reservation.length<=0)htmlResultat+="<div class='text-center'>Pas de rendez-vous disponible</div>";
         else{
           var psychologue = await Psychologue.findOne({where:{id_psychologue:reservation[0].id_psychologue}});
           for(var i=0;i<reservation.length;i++){
