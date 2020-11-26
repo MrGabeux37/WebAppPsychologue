@@ -650,7 +650,7 @@ module.exports = [
           resultat:htmlResultat
         }
 
-        return h.view('psychologue/calendar',data,{layout:'psychologue'});
+        return h.view('psychologue/reservations',data,{layout:'psychologue'});
       }
     }
   },
@@ -732,7 +732,7 @@ module.exports = [
           resultat:htmlResultat
         }
 
-        return h.view('psychologue/calendar',data,{layout:'psychologue'});
+        return h.view('psychologue/reservations',data,{layout:'psychologue'});
       }
     }
   },
@@ -815,7 +815,7 @@ module.exports = [
           resultat:htmlResultat
         }
 
-        return h.view('psychologue/calendar',data,{layout:'psychologue'});
+        return h.view('psychologue/reservations',data,{layout:'psychologue'});
       }
     }
   },
@@ -917,7 +917,7 @@ module.exports = [
           resultat:htmlResultat
         }
 
-        return h.view('psychologue/calendar',data,{layout:'psychologue'});
+        return h.view('psychologue/reservations',data,{layout:'psychologue'});
       }
     }
   },

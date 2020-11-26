@@ -219,7 +219,7 @@ module.exports = [
           resultat:htmlResultat
         }
 
-        return h.view('client/calendar',data,{layout:'clientOui'});
+        return h.view('client/disponnibilite',data,{layout:'clientOui'});
       }
     }
   },
