@@ -1,5 +1,4 @@
 function CheckPW(){
-
   //assigne les passwords
   var firstPW = document.getElementById("firstPW").value ;
   var confirmPW = document.getElementById("confirmPW").value ;
@@ -12,9 +11,6 @@ function CheckPW(){
     document.getElementById("alertPW").innerHTML="";
     document.getElementById("bouton").disabled=false;
   }
-
-
-
 }
 
 //selection famille monoparentale
@@ -49,5 +45,4 @@ function onSelectCourrielEnfant(checkbox){
   else{
     document.getElementById("courriel_enfant").disabled=false;
   }
-
 }

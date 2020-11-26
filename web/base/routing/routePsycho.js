@@ -596,9 +596,11 @@ module.exports = [
         });
 
         var enfant;
-        var psychologue = await Psychologue.findOne({where:{id_psychologue:reservation[0].id_psychologue}});
+
         if(reservation.length<=0)htmlResultat+="<div class='text-center'>Ce client n'a pas de réservations</div>";
+
         else{
+          var psychologue = await Psychologue.findOne({where:{id_psychologue:reservation[0].id_psychologue}});
           for(var i=0;i<reservation.length;i++){
             var nom_client='';
             var prenom_client='';
@@ -609,7 +611,7 @@ module.exports = [
               enfant = await Client.findOne({where:{id_client:reservation[i].id_client}})
               nom_client = enfant.nom;
               prenom_client = enfant.prenom;
-              disponnible = 'Non'
+              disponnible = 'Non';
             }
 
             var month;
@@ -667,12 +669,7 @@ module.exports = [
         var today=new Date();
         var htmlResultat='';
         var reservation = await RendezVous.findAll({
-          where:{
-            [Op.and]:[
-              {date:{[Op.lt]:today}},
-              {disponibilite:false}
-            ]
-          },
+          where:{date:{[Op.lt]:today}},
           order:[
             ['date','DESC']
           ]
