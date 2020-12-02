@@ -1,0 +1,27 @@
+#calendrierPsycho {
+  display: grid;
+  grid-template-columns: repeat(7,1fr);
+  grid-template-rows: repeat(5,1fr);
+  text-align: center;
+  height: 100%;
+  padding: 0px;
+  border: 1px solid black;
+}
+
+.day {
+  border : 1px solid black;
+}
+
+.weekend {
+  border : 1px solid black;
+  color: blue;
+}
+
+.name {
+
+}
+
+.selected {
+  background-color: red;
+  color : white;
+}
