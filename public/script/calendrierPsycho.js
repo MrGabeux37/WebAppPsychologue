@@ -1,5 +1,5 @@
 const isWeekend = day => {
-  return day%7===6 || day%7===5;
+  return day%7===5 || day%7===6;
 }
 
 function whatMonth(month){
