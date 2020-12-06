@@ -1,5 +1,5 @@
 const isWeekend = day => {
-  return day%7===0 || day%7===6;
+  return day%7===0 || day%7===1;
 }
 
 function whatMonth(month){
@@ -16,6 +16,18 @@ function whatMonth(month){
     case 9: return "Octobre";
     case 10: return "Novembre";
     case 11: return "Décembre";
+  }
+}
+
+function whatDay(dayMonth){
+  switch(dayMonth){
+    case 0: return "Dimanche";
+    case 1: return "Lundi";
+    case 2: return "Mardi";
+    case 3: return "Mercredi";
+    case 4: return "Jeudi";
+    case 5: return "Vendredi";
+    case 6: return "Samedi";
   }
 }
 
@@ -40,8 +52,8 @@ window.onload = init;
     for(let week=1;week<=7;week++){
 
       const date = new Date(Date.UTC(2018,0,week));
-      const options = {weekday : "short"}
-      var dayname = new Intl.DateTimeFormat("en-US",options).format(date);
+      const options = {weekday : "long"}
+      var dayname = new Intl.DateTimeFormat("fr-CA",options).format(date);
 
       cal.insertAdjacentHTML("beforeend",`<div class="name">${dayname}</div>`);
     }
