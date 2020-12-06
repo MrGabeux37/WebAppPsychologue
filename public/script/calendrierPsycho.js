@@ -1,9 +1,10 @@
 const isWeekend = day => {
-  return day%7===0 || day%7===1;
+  return day%7===6 || day%7===5;
 }
 
 function whatMonth(month){
-  switch(month){
+  month+=72;
+  switch(month%12){
     case 0: return "Janvier";
     case 1: return "Février";
     case 2: return "Mars";
@@ -20,7 +21,8 @@ function whatMonth(month){
 }
 
 function whatDay(dayMonth){
-  switch(dayMonth){
+  dayMonth+=49;
+  switch(dayMonth%7){
     case 0: return "Dimanche";
     case 1: return "Lundi";
     case 2: return "Mardi";
@@ -44,26 +46,33 @@ window.onload = init;
     var backForthMonth=0;
     const dateToday = new Date();
     const monthToday = dateToday.getMonth();
-    var monthSelect = whatMonth(monthToday+backForthMonth);
-    console.log(dateToday);
+    var monthSelect = monthToday+backForthMonth;
+    var monthSelectName = whatMonth(monthToday+backForthMonth);
+    var yearSelect = dateToday.getFullYear();
+    const tempDate = new Date(yearSelect,monthSelect,1);
+    const lastDay = new Date(yearSelect,(monthSelect+1)%12,0);
+    console.log(lastDay.getDate());
 
-    cal.insertAdjacentHTML("beforebegin",`<div class="month">${monthSelect}</div>`)
+    cal.insertAdjacentHTML("beforebegin",`<div class="month">${monthSelectName}</div>`)
 
+    //nom des jours avant le calendrier
     for(let week=1;week<=7;week++){
-
       const date = new Date(Date.UTC(2018,0,week));
-      const options = {weekday : "long"}
+      const options = {weekday : "long"};
       var dayname = new Intl.DateTimeFormat("fr-CA",options).format(date);
-
       cal.insertAdjacentHTML("beforeend",`<div class="name">${dayname}</div>`);
     }
 
-    for(let day = 1 ; day<=35 ; day++){
-
+    //fills blank before the first day;
+    for(let day = 1 ; day<=tempDate.getDay() ; day++){
       const weekend = isWeekend(day);
+      cal.insertAdjacentHTML("beforeend",`<div class="day ${weekend ? "weekend" : ""}"></div>`);
+    }
 
+    //month days
+    for(let day = 1 ; day<=lastDay.getDate() ; day++){
+      const weekend = isWeekend(day);
       cal.insertAdjacentHTML("beforeend",`<div class="day ${weekend ? "weekend" : ""}">${day}</div>`);
-
     }
 
     document.querySelectorAll("#calendrierPsycho .day").forEach(day => {
