@@ -25,3 +25,13 @@
   background-color: red;
   color : white;
 }
+
+.month {
+  display: grid;
+  text-align: center;
+  height: 100%;
+  padding: 0px;
+  border-style: solid;
+  border-color: black;
+  border-width: 2px 2px 0px 2px;
+}

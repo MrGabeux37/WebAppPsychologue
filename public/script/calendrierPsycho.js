@@ -1,3 +1,24 @@
+const isWeekend = day => {
+  return day%7===0 || day%7===6;
+}
+
+function whatMonth(month){
+  switch(month){
+    case 0: return "Janvier";
+    case 1: return "Février";
+    case 2: return "Mars";
+    case 3: return "Avril";
+    case 4: return "Mai";
+    case 5: return "Juin";
+    case 6: return "Juillet";
+    case 7: return "Août";
+    case 8: return "Septembre";
+    case 9: return "Octobre";
+    case 10: return "Novembre";
+    case 11: return "Décembre";
+  }
+}
+
 (function(window, document, undefined){
 
 // code that should be taken care of right away
@@ -8,10 +29,13 @@ window.onload = init;
 
     const cal = document.getElementById("calendrierPsycho");
     console.log(cal);
+    var backForthMonth=0;
+    const dateToday = new Date();
+    const monthToday = dateToday.getMonth();
+    var monthSelect = whatMonth(monthToday+backForthMonth);
+    console.log(dateToday);
 
-    const isWeekend = day => {
-      return day%7===0 || day%7===6;
-    }
+    cal.insertAdjacentHTML("beforebegin",`<div class="month">${monthSelect}</div>`)
 
     for(let week=1;week<=7;week++){
 
