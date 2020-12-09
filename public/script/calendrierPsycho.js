@@ -1,16 +1,14 @@
-var backForthMonth=0;
-console.log(backForthMonth);
-const dateToday = new Date();
-const monthToday = dateToday.getMonth();
-var monthSelect = monthToday+backForthMonth;
-var monthSelectName = whatMonth(monthToday+backForthMonth);
+var dateToday = new Date();
+var monthToday = dateToday.getMonth();
+var monthSelect = monthToday;
+var monthSelectName = whatMonth(monthToday);
 var yearSelect = dateToday.getFullYear();
-const tempDate = new Date(yearSelect,monthSelect,1);
-const lastDay = new Date(yearSelect,(monthSelect+1)%12,0);
-console.log(lastDay.getDate());
+var tempDate = new Date(yearSelect,monthSelect,1);
+var lastDay = new Date(yearSelect,(monthSelect+1),0);
+console.log(lastDay);
 
 const isWeekend = day => {
-  return day%7===5 || day%7===6;
+  return day%7===0 || day%7===6;
 }
 
 function whatMonth(month){
@@ -43,55 +41,80 @@ function whatDay(dayMonth){
 }
 
 function reculeMois(){
-  if(backForthMonth==0)return backForthMonth=11;
-  else return backForthMonth--;
+  dateToday.setMonth(dateToday.getMonth()-1);
+  console.log(dateToday);
+  monthToday = dateToday.getMonth();
+  monthSelect = monthToday;
+  monthSelectName = whatMonth(monthToday);
+  yearSelect = dateToday.getFullYear();
+  tempDate = new Date(yearSelect,monthSelect,1);
+  lastDay = new Date(yearSelect,(monthSelect+1),0);
+  var cal = document.getElementById("calendrierPsycho");
+  cal.innerHTML = '';
+  var month = document.getElementById("month");
+  month.innerHTML = '';
+  init();
 }
 
 function avanceMois(){
-  if (backForthMonth==12) return backForthMonth==0;
-  else return backForthMonth++;
+  dateToday.setMonth(dateToday.getMonth()+1);
+  console.log(dateToday);
+  monthToday = dateToday.getMonth();
+  monthSelect = monthToday;
+  monthSelectName = whatMonth(monthToday);
+  yearSelect = dateToday.getFullYear();
+  tempDate = new Date( yearSelect , monthSelect , 1 );
+  lastDay = new Date( yearSelect , (monthSelect+1) , 0 );
+  var cal = document.getElementById("calendrierPsycho");
+  cal.innerHTML = '';
+  var month = document.getElementById("month");
+  month.innerHTML = '';
+  init();
 }
 
-(function(window, document, undefined){
+function init(){
 
-// code that should be taken care of right away
-
-window.onload = init;
-
-  function init(){
-
-    const cal = document.getElementById("calendrierPsycho");
-    console.log(dateToday);
-
-    cal.insertAdjacentHTML("beforebegin",`<div class="month"> <button onclick="reculeMois()"> < </button> <div>${monthSelectName}</div> <button onclick="avanceMois()"> > </button> </div>`);
-
-    //nom des jours avant le calendrier
-    for(let week=1;week<=7;week++){
-      const date = new Date(Date.UTC(2018,0,week));
-      const options = {weekday : "long"};
-      var dayname = new Intl.DateTimeFormat("fr-CA",options).format(date);
-      cal.insertAdjacentHTML("beforeend",`<div class="name">${dayname}</div>`);
-    }
-
-    //fills blank before the first day;
-    for(let day = 1 ; day<=tempDate.getDay() ; day++){
-      const weekend = isWeekend(day);
-      cal.insertAdjacentHTML("beforeend",`<div class="day ${weekend ? "weekend" : ""}"></div>`);
-    }
-
-    //month days
-    for(let day = 1 ; day<=lastDay.getDate() ; day++){
-      const weekend = isWeekend(day);
-      cal.insertAdjacentHTML("beforeend",`<div class="day ${weekend ? "weekend" : ""}">${day}</div>`);
-    }
-
-    document.querySelectorAll("#calendrierPsycho .day").forEach(day => {
-        day.addEventListener("click", event => {
-          event.currentTarget.classList.toggle("selected");
-        });
-    });
+  var month = document.getElementById("month");
+  console.log(month);
+  var cal = document.getElementById("calendrierPsycho");
+  console.log(cal);
 
 
+  month.insertAdjacentHTML("beforeend",` <button onclick="reculeMois()"> < </button> <div>${monthSelectName}</div> <button onclick="avanceMois()"> > </button>`);
+
+  //nom des jours avant le calendrier
+  for(let week=1;week<=7;week++){
+    const date = new Date(Date.UTC(2018,0,week));
+    const options = {weekday : "long"};
+    var dayname = new Intl.DateTimeFormat("fr-CA",options).format(date);
+    cal.insertAdjacentHTML("beforeend",`<div class="name">${dayname}</div>`);
   }
 
-})(window, document, undefined);
+  //fills blank before the first day;
+  for(let day = 1 ; day<=tempDate.getDay() ; day++){
+    const weekend = isWeekend(day);
+    cal.insertAdjacentHTML("beforeend",`<div class="day ${weekend ? "weekend" : ""}"></div>`);
+  }
+
+  //month days
+  for(let day = 1 ; day<=lastDay.getDate() ; day++){
+    const date = new Date(yearSelect,monthSelect,day);
+    const weekend = isWeekend(date.getDay());
+    cal.insertAdjacentHTML("beforeend",`<div class="day ${weekend ? "weekend" : ""}">${day}</div>`);
+  }
+
+  //fills blank after the last day;
+  for(let day = lastDay.getDay() ; day<6 ; day++){
+    const weekend = isWeekend(day);
+    cal.insertAdjacentHTML("beforeend",`<div class="day ${weekend ? "weekend" : ""}"></div>`);
+  }
+
+  document.querySelectorAll("#calendrierPsycho .day").forEach(day => {
+      day.addEventListener("click", event => {
+        event.currentTarget.classList.toggle("selected");
+      });
+  });
+
+
+}
+window.onload = init;
