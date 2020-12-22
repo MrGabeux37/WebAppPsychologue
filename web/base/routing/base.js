@@ -13,19 +13,6 @@ const PlageHoraire = require('../models/plagehoraire.js');
 const RendezVous = require('../models/rendezvous.js');
 
 module.exports=[
-  //test
-  {
-    method: 'GET',
-    path:'/testing',
-    options:{
-      auth:false
-    },
-    handler:function (request, h) {
-
-
-      return h.view('psychologue/calendar')
-    }
-  },
   //Servir fichier Static
   {
     method: 'GET',
