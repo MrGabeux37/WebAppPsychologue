@@ -114,7 +114,5 @@ function init(){
         event.currentTarget.classList.toggle("selected");
       });
   });
-
-
 }
 window.onload = init;
