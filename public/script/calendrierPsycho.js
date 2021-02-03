@@ -1,5 +1,3 @@
-'use strict'
-
 const Mysql = require('mysql');
 const Sequelize =require('sequelize');
 const Op = Sequelize.Op;
