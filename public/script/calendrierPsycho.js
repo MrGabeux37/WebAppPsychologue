@@ -1,4 +1,12 @@
-const Sequelize = require('sequelize');
+'use strict'
+
+const Mysql = require('mysql');
+const Sequelize =require('sequelize');
+const Op = Sequelize.Op;
+const Client = require('../../web/base/models/client.js');
+const Psychologue = require('../../web/base/models/psychologue.js');
+const PlageHoraire = require('../../web/base/models/plagehoraire.js');
+const RendezVous = require('../../web/base/models/rendezvous.js');
 
 var dateToday = new Date();
 var monthToday = dateToday.getMonth();
