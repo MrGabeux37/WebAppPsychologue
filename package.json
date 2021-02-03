@@ -5,6 +5,7 @@
   "main": "server.js",
   "dependencies": {
     "boom": "^7.3.0",
+    "browserify": "^17.0.0",
     "dotenv": "^8.2.0",
     "handlebars": "^4.7.6",
     "handlebars-helper-repeat": "^2.0.0",

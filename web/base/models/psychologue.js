@@ -1,4 +1,4 @@
-const Sequelize =require('sequelize');
+const Sequelize = require('sequelize');
 const sequelize = require('../models.js')
 
 const Psychologue = sequelize.define('psychologue',{

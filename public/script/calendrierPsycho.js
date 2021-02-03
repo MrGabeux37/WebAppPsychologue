@@ -1,3 +1,5 @@
+const Sequelize = require('sequelize');
+
 var dateToday = new Date();
 var monthToday = dateToday.getMonth();
 var monthSelect = monthToday;
